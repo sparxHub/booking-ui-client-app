@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { BellIcon, ChevronDownIcon } from "@heroicons/react/24/outline"
-import { Dialog } from "../organisms/dialog" // Import the Dialog component
+import { Dialog } from "./dialog" // Import the Dialog component
 
 export function HeaderBar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false) // Fake login state

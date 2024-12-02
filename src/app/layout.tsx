@@ -1,6 +1,6 @@
 import { Metadata } from "next"
 
-import LayoutWrapper from "@/components/templates/layout-wrapper"
+import LayoutWrapper from "@/components/layout-wrapper"
 import "@/styles/tailwind.css"
 
 import {

@@ -1,6 +1,6 @@
-import { Calendar } from "../components/organisms/calendar"
-import { TimePicker } from "../components/molecules/time-picker"
-import { TimezonePicker } from "../components/molecules/timezone-picker"
+import { Calendar } from "../components/calendar"
+import { TimePicker } from "../components/time-picker"
+import { TimezonePicker } from "../components/timezone-picker"
 
 export default function Homepage() {
   return (

@@ -4,8 +4,8 @@ import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useDateFormatter } from "react-aria"
 
-import { Button, ButtonProps } from "@/components/atoms/button"
-import { Input, Textarea } from "@/components/atoms/input"
+import { Button, ButtonProps } from "@/components/button"
+import { Input, Textarea } from "@/components/input"
 
 export default function PageComponent() {
   const router = useRouter()
@@ -30,7 +30,7 @@ export default function PageComponent() {
     setStatus("loading")
     setTimeout(() => {
       setTimeout(() => {
-        router.push(`/confirmation?time=${time}`)
+        router.push(`/booking/confirmation?time=${time}`)
       }, 1000)
       setStatus("success")
     }, 2500)

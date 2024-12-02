@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation"
 import { useDateFormatter } from "react-aria"
 
-import { Signature } from "@/components/misc/signature"
+import { Signature } from "@/components/signature"
 
 export default function BookingDetailsPage() {
   const router = useRouter()

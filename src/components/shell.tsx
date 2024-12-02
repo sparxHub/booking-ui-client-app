@@ -3,7 +3,7 @@ import { Metadata } from "next"
 import { SidePanel } from "./side-panel"
 import { MainPanel } from "./main-panel"
 import { BackgroundDecoration } from "./background-decoration"
-import { Ribbon } from "../atoms/ribbon"
+import { Ribbon } from "./ribbon"
 
 const title = "Pro Tailwind Coaching"
 const description =

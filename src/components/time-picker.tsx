@@ -12,7 +12,7 @@ import {
 
 import { useSelectedDate } from "@/context/selected-date"
 import { useBookingAvailabilities } from "@/context/booking-availabilities"
-import { Button } from "../atoms/button"
+import { Button } from "./button"
 
 export function TimePicker() {
   const { selectedDate } = useSelectedDate()
@@ -123,7 +123,7 @@ function TimeSlot({ availability, selectedTime, setSelectedTime }) {
           tabIndex={isSelected ? 0 : -1}
           className="w-full focus-visible:ring-inset focus-visible:ring-offset-0"
           onClick={() =>
-            router.push(`/booking-details?time=${availability.startTime}`)
+            router.push(`/booking/booking-details?time=${availability.startTime}`)
           }
         >
           Confirm
