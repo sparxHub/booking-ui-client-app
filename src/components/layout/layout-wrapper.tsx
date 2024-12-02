@@ -7,9 +7,9 @@ import { ThemeProvider, useTheme } from "@/context/theme"
 import { SelectedDateProvider } from "@/context/selected-date"
 import { BookingAvailabilitiesProvider } from "@/context/booking-availabilities"
 
-import { Shell } from "@/components/shell"
+import { Shell } from "@/components/layout/shell"
 // import { ThemeSwitcher } from "./theme-switcher"
-import { HeaderBar } from "./header-bar"
+import { HeaderBar } from "../header-bar"
 
 const openSans = Open_Sans({
   display: "swap",

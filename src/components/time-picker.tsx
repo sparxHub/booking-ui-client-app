@@ -12,7 +12,7 @@ import {
 
 import { useSelectedDate } from "@/context/selected-date"
 import { useBookingAvailabilities } from "@/context/booking-availabilities"
-import { Button } from "./button"
+import { Button } from "./shared/button"
 
 export function TimePicker() {
   const { selectedDate } = useSelectedDate()

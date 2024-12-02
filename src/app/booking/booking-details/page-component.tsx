@@ -4,8 +4,8 @@ import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useDateFormatter } from "react-aria"
 
-import { Button, ButtonProps } from "@/components/button"
-import { Input, Textarea } from "@/components/input"
+import { Button, ButtonProps } from "@/components/shared/button"
+import { Input, Textarea } from "@/components/shared/input"
 
 export default function PageComponent() {
   const router = useRouter()
