@@ -2,8 +2,8 @@ import { Metadata } from "next"
 
 import { SidePanel } from "./side-panel"
 import { MainPanel } from "./main-panel"
-import { BackgroundDecoration } from "../background-decoration"
-import { Ribbon } from "../ribbon"
+import { BackgroundDecoration } from "../../../components/background-decoration"
+import { Ribbon } from "../../../components/ribbon"
 
 const title = "Pro Tailwind Coaching"
 const description =
