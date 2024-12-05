@@ -12,7 +12,7 @@ const customLoader = ({ src, width, quality }) => {
 
 const imageSrc = heroImage?.src || "/img/social-large.jpg";
 
-export function SidePanel() {
+export function BookingSidePanel() {
   return (
     <aside className="rounded-t-2xl border-8 border-b-0 border-white bg-white bg-opacity-90 backdrop-blur-md lg:rounded-l-2xl lg:rounded-tr-none lg:border-b-8 lg:border-r-0 lg:pr-4 [@supports(backdrop-filter:blur(0))]:bg-opacity-80">
       <div className="-mt-16 px-4 py-8 sm:px-8 md:mt-0 lg:-mt-16 lg:px-6 xl:px-8">

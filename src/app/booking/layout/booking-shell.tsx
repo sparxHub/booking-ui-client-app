@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 
-import { SidePanel } from "./side-panel"
-import { MainPanel } from "./main-panel"
+import { BookingSidePanel } from "./booking-side-panel"
+import { BookingMainPanel } from "./booking-main-panel"
 import { BackgroundDecoration } from "../../../components/background-decoration"
 import { Ribbon } from "../../../components/ribbon"
 
@@ -49,16 +49,15 @@ export const metadata: Metadata = {
   },
 }
 
-export function Shell({ children }) {
+export function BookingShell({ children }) {
   return (
     <div className="grid min-h-screen place-items-center">
-      <BackgroundDecoration />
       <div className="mx-auto w-full max-w-5xl px-2 py-16 sm:px-6 lg:max-w-7xl lg:px-3 xl:px-8">
         <div className="relative">
           <Ribbon />
           <div className="grid h-full rounded-2xl shadow-lg lg:grid-cols-[theme(width.80),1fr] xl:grid-cols-[theme(width.96),1fr]">
-            <SidePanel />
-            <MainPanel>{children}</MainPanel>
+            <BookingSidePanel />
+            <BookingMainPanel>{children}</BookingMainPanel>
           </div>
         </div>
       </div>

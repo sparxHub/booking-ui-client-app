@@ -1,6 +1,6 @@
 import { Metadata } from "next"
 
-import LayoutWrapper from "@/app/booking/layout/layout-wrapper"
+import LayoutWrapper from "@/app/booking/layout/booking-layout-wrapper"
 import "@/styles/tailwind.css"
 
 import {

@@ -1,4 +1,4 @@
-export function MainPanel({ children }) {
+export function BookingMainPanel({ children }) {
   return (
     <main className="relative rounded-b-2xl bg-white shadow-[0px_-30px_50px_-50px_rgba(0,0,0,0.2)] md:h-[700px] lg:rounded-r-2xl lg:rounded-bl-none lg:shadow-[-60px_0_50px_-50px_rgba(0,0,0,0.2)]">
       {/*  
