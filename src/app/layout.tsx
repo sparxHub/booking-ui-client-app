@@ -1,6 +1,6 @@
 import { Metadata } from "next"
 
-import LayoutWrapper from "@/app/_layout/root-layout-wrapper"
+import AppLayout from "@/components/layout/app-layout"
 import "@/styles/tailwind.css"
 
 import {
@@ -42,5 +42,5 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <LayoutWrapper>{children}</LayoutWrapper>
+  return <AppLayout>{children}</AppLayout>
 }
