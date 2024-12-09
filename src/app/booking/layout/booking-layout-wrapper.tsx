@@ -8,8 +8,6 @@ import { SelectedDateProvider } from "@/context/selected-date"
 import { BookingAvailabilitiesProvider } from "@/context/booking-availabilities"
 
 import { BookingShell } from "@/app/booking/layout/booking-shell"
-// import { ThemeSwitcher } from "./theme-switcher"
-import { HeaderBar } from "../../../components/header-bar"
 
 const openSans = Open_Sans({
   display: "swap",
@@ -25,13 +23,7 @@ export default function RootLayout({
   const { locale, direction } = useLocale()
 
   return (
-    // <I18nProvider locale={locale}>
-      // <ThemeProvider>
-        // <html lang={locale} dir={direction} className={openSans.className}>
           <Body>{children}</Body>
-        // </html>
-      // </ThemeProvider>
-    // </I18nProvider>
   )
 }
 
@@ -39,12 +31,10 @@ export default function RootLayout({
 function Body({ children }) {
   const { theme } = useTheme()
   return (
-    // <body className="antialiased" data-theme={theme}>
       <SelectedDateProvider>
         <BookingAvailabilitiesProvider>
           <BookingShell>{children}</BookingShell>
         </BookingAvailabilitiesProvider>
       </SelectedDateProvider>
-    // </body>
   )
 }

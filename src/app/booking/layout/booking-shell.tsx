@@ -54,7 +54,7 @@ export function BookingShell({ children }) {
     <div className="grid min-h-screen place-items-center">
       <div className="mx-auto w-full max-w-5xl px-2 py-16 sm:px-6 lg:max-w-7xl lg:px-3 xl:px-8">
         <div className="relative">
-          <Ribbon />
+          {/* <Ribbon /> */}
           <div className="grid h-full rounded-2xl shadow-lg lg:grid-cols-[theme(width.80),1fr] xl:grid-cols-[theme(width.96),1fr]">
             <BookingSidePanel />
             <BookingMainPanel>{children}</BookingMainPanel>
