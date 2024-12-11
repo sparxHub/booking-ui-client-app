@@ -9,7 +9,7 @@ import { BookingAvailabilitiesProvider } from '@/context/booking-availabilities'
 
 import { BookingShell } from '@/app/booking/layout/booking-shell';
 // import { ThemeSwitcher } from "./theme-switcher"
-import { HeaderBar } from '@/components/header-bar';
+import { NavBar } from '@/components/navbar';
 import { BackgroundDecoration } from '@/components/background-decoration';
 
 const openSans = Open_Sans({
@@ -41,7 +41,7 @@ function Body({ children }) {
   const { theme } = useTheme();
   return (
     <body className="antialiased" data-theme={theme}>
-      <HeaderBar />
+      <NavBar />
       <div className="grid min-h-screen place-items-center">
         <BackgroundDecoration />
         <div className="mx-auto w-full max-w-5xl px-2 py-16 sm:px-6 lg:max-w-7xl lg:px-3 xl:px-8">

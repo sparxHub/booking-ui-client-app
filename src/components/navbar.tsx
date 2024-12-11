@@ -1,26 +1,34 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { BellIcon, ChevronDownIcon } from "@heroicons/react/24/outline"
-import { Dialog } from "../app/dialogs/dialog" // Import the Dialog component
+import { useState } from "react";
+import { BellIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
+import { Dialog } from "../app/dialogs/dialog"; // Import the Dialog component
+// import { useTheme } from "@/context/theme";
 
-export function HeaderBar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // Fake login state
-  const [isDialogOpen, setIsDialogOpen] = useState(false) // State for dialog visibility
+export function NavBar() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Fake login state
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // State for dialog visibility
+  // const { theme } = useTheme();
+
+  const primaryBg = "bg-primary-900";
+  const primaryHoverBg = "hover:bg-primary-800";
+  const primaryText = "text-primary-900";
 
   const handleSignIn = (event: React.FormEvent) => {
-    event.preventDefault() // Prevent form submission
-    setIsLoggedIn(true)
-    setIsDialogOpen(false) // Close dialog after sign-in
-  }
+    event.preventDefault(); // Prevent form submission
+    setIsLoggedIn(true);
+    setIsDialogOpen(false); // Close dialog after sign-in
+  };
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-50 bg-white text-black shadow-md">
+      <header
+        className={`fixed top-0 left-0 w-full z-50 bg-transparent backdrop-blur-md shadow-md transition-colors duration-300`}
+      >
         <div className="flex items-center justify-between px-6 py-4">
           {/* Logo */}
-          <div className="text-lg font-bold flex items-center space-x-2">
-            <div className="w-6 h-6 bg-green-500 rounded-full"></div> {/* Fake logo */}
+          <div className={`text-lg font-bold flex items-center space-x-2 ${primaryText}`}>
+            <div className={`w-6 h-6 rounded-full ${primaryBg}`}></div> {/* Fake logo */}
             <span>My App</span>
           </div>
 
@@ -50,18 +58,19 @@ export function HeaderBar() {
               <>
                 {/* Sign Up */}
                 <button
-                  className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"
+                  className={`px-4 py-2 rounded-full text-white ${primaryBg} ${primaryHoverBg}`}
                   onClick={() => setIsLoggedIn(true)}
                 >
                   Sign Up
                 </button>
                 {/* Sign In */}
                 <button
-                  className="px-4 py-2 border border-green-500 text-green-500 rounded-full hover:bg-green-100"
+                  className={`px-4 py-2 border rounded-full ${primaryText} border-primary-900 hover:bg-primary-800`}
                   onClick={() => setIsDialogOpen(true)} // Open dialog
                 >
                   Sign In
                 </button>
+
               </>
             )}
           </div>
@@ -76,21 +85,21 @@ export function HeaderBar() {
           <input
             type="email"
             placeholder="Your email"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
           <input
             type="password"
             placeholder="Your password"
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
           <button
             type="submit"
-            className="w-full px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"
+            className={`w-full px-4 py-2 rounded-full text-white ${primaryBg} ${primaryHoverBg}`}
           >
             Sign In
           </button>
         </form>
       </Dialog>
     </>
-  )
+  );
 }

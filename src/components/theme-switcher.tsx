@@ -13,7 +13,7 @@ import { useTheme } from "@/context/theme"
 
 export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme()
-  const themesList = ["ocean", "rainforest", "candy"]
+  const themesList = ["gray", "ocean", "rainforest", "candy"]
 
   return (
     <div className="fixed right-2 top-2 z-20 text-right">
