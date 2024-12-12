@@ -1,41 +1,84 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Image from "next/image";
+import { useState } from 'react';
+import Image from 'next/image';
 
-import { ServiceSteps } from "@/components/service-steps";
-import heroImage from "@/../public/img/social-large.jpg";
+import { ServiceSteps } from '@/components/service-steps';
+import { NavBar } from '@/components/navbar';
+import heroImage from '@/../public/img/social-large.jpg';
 
-const isExport = process.env.NEXT_PUBLIC_EXPORT_MODE === "true";
+const isExport = process.env.NEXT_PUBLIC_EXPORT_MODE === 'true';
 
 const customLoader = ({ src, width, quality }) => {
   return `${src}?w=${width}&q=${quality || 75}`;
 };
 
-const imageSrc = heroImage?.src || "/img/social-large.jpg";
+const imageSrc = heroImage?.src || '/img/social-large.jpg';
 
 export default function HomePage() {
   const serviceData = [
     {
-      title: "Classes",
+      title: 'Classes',
       items: [
-        { title: "Yoga", description: "Improve flexibility and core strength.", duration: "45m", type: "Group", action: "/booking?yoga" },
-        { title: "Power", description: "High-energy strength training session.", duration: "60m", type: "Group", action: "/booking?power" },
-        { title: "Mix", description: "Combination of cardio and strength.", duration: "50m", type: "Group", action: "/booking?mix" },
-        { title: "Mix", description: "Combination of cardio and strength.", duration: "50m", type: "Group", action: "/booking?mix" },
-        { title: "HIIT", description: "Combination of cardio and strength.", duration: "50m", type: "Group", action: "/booking?mix" },
+        {
+          title: 'Yoga',
+          description: 'Improve flexibility and core strength.',
+          duration: '45m',
+          type: 'Group',
+          action: '/booking?yoga',
+        },
+        {
+          title: 'Power',
+          description: 'High-energy strength training session.',
+          duration: '60m',
+          type: 'Group',
+          action: '/booking?power',
+        },
+        {
+          title: 'Mix',
+          description: 'Combination of cardio and strength.',
+          duration: '50m',
+          type: 'Group',
+          action: '/booking?mix',
+        },
+        {
+          title: 'Mix',
+          description: 'Combination of cardio and strength.',
+          duration: '50m',
+          type: 'Group',
+          action: '/booking?mix',
+        },
+        {
+          title: 'HIIT',
+          description: 'Combination of cardio and strength.',
+          duration: '50m',
+          type: 'Group',
+          action: '/booking?mix',
+        },
       ],
     },
     {
-      title: "Private Classes",
+      title: 'Private Classes',
       items: [
-        { title: "Yoga with Dave", description: "1-on-1 private yoga session.", duration: "30m", type: "Private", action: "/booking?dave" },
-        { title: "Yoga with Natalie", description: "Personalized yoga instruction.", duration: "30m", type: "Private", action: "/booking?natalie" },
+        {
+          title: 'Yoga with Dave',
+          description: '1-on-1 private yoga session.',
+          duration: '30m',
+          type: 'Private',
+          action: '/booking?dave',
+        },
+        {
+          title: 'Yoga with Natalie',
+          description: 'Personalized yoga instruction.',
+          duration: '30m',
+          type: 'Private',
+          action: '/booking?natalie',
+        },
       ],
     },
     {
-      title: "External Link",
-      url: "https://example.com",
+      title: 'External Link',
+      url: 'https://example.com',
     },
   ];
 
@@ -64,11 +107,14 @@ export default function HomePage() {
         </p>
       </div>
 
+      {/* NavBar */}
+      <NavBar />
+
       {/* Service Steps */}
       <ServiceSteps steps={serviceData} />
 
       {/* Logo Image at Bottom Center */}
-      <div className="absolute pt-10 left-1/2 transform -translate-x-1/2">
+      <div className="absolute left-1/2 -translate-x-1/2 transform pt-10">
         <img
           src="/img/simply_studio_logo_b_w.png"
           alt="Simply Studio Logo"

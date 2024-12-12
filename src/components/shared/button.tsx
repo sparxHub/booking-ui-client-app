@@ -1,74 +1,80 @@
-import React from "react"
-import { twMerge } from "tailwind-merge"
+import React from "react";
+import { twMerge } from "tailwind-merge";
 
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
-} from "@heroicons/react/24/outline"
+} from "@heroicons/react/24/outline";
 
 // ------------------------------
 // Prop types
 // ------------------------------
 export type ButtonProps = {
-  impact?: "bold" | "light" | "none"
-  size?: "small" | "medium" | "large"
-  shape?: "square" | "rounded" | "pill"
-  tone?: "default" | "danger" | "success"
-  status?: "idle" | "loading" | "success" | "error"
-}
+  impact?: "bold" | "light" | "none" | "outline"; // Added "outline"
+  size?: "small" | "medium" | "large";
+  shape?: "square" | "rounded" | "pill";
+  tone?: "default" | "danger" | "success";
+  status?: "idle" | "loading" | "success" | "error";
+};
 
 // ------------------------------
 // Tailwind Classes lookup directory
 // ------------------------------
 const baseClasses =
-  "font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-80 transition"
+  "font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:translate-y-px disabled:pointer-events-none disabled:opacity-80 transition";
 
 const impactClasses: Record<
   NonNullable<ButtonProps["tone"]>,
   Record<NonNullable<ButtonProps["impact"]>, string>
 > = {
   default: {
-    bold: "bg-primary-500 text-white shadow-md hover:bg-primary-600 focus-visible:ring-primary-500",
+    bold: "bg-primary-900 text-white shadow-md hover:bg-primary-800 focus-visible:ring-primary-700",
     light:
       "bg-primary-100 text-primary-700 hover:bg-primary-200 focus-visible:ring-primary-500",
-    none: "bg-transparent text-primary-700 hover:bg-primary-50 focus-visible:ring-primary-500",
+    outline:
+      "border border-primary-900 text-primary-900 hover:bg-primary-400 focus-visible:ring-primary-900",
+    none: "bg-transparent text-primary-900 hover:bg-primary-400 focus-visible:ring-primary-700",
   },
   danger: {
     bold: "bg-red-500 text-white shadow-md hover:bg-red-600 focus-visible:ring-red-500",
     light:
       "bg-red-100 text-red-700 hover:bg-red-200 focus-visible:ring-red-500",
+    outline:
+      "border border-red-700 text-red-700 hover:bg-red-50 focus-visible:ring-red-500",
     none: "bg-transparent text-red-700 hover:bg-red-50 focus-visible:ring-red-500",
   },
   success: {
     bold: "bg-emerald-500 text-white shadow-md hover:bg-emerald-600 focus-visible:ring-emerald-500",
     light:
       "bg-emerald-100 text-emerald-700 hover:bg-emerald-200 focus-visible:ring-emerald-500",
+    outline:
+      "border border-emerald-700 text-emerald-700 hover:bg-emerald-50 focus-visible:ring-emerald-500",
     none: "bg-transparent text-emerald-700 hover:bg-emerald-50 focus-visible:ring-emerald-500",
   },
-}
+};
 
 const sizeClasses: Record<NonNullable<ButtonProps["size"]>, string> = {
   small: "px-3 py-1 text-sm",
   medium: "px-5 py-2.5 text-base",
   large: "px-7 py-3 text-lg",
-}
+};
 
 const shapeClasses: Record<NonNullable<ButtonProps["shape"]>, string> = {
-  square: "rounded-none",
+  square: "aspect-square rounded-none", // Added `aspect-square` to ensure perfect square
   rounded: "rounded",
   pill: "rounded-full",
-}
+};
 
 function getToneFromStatus(
-  status: ButtonProps["status"],
+  status: ButtonProps["status"]
 ): NonNullable<ButtonProps["tone"]> {
   switch (status) {
     case "success":
-      return "success"
+      return "success";
     case "error":
-      return "danger"
+      return "danger";
     default:
-      return "default"
+      return "default";
   }
 }
 
@@ -93,7 +99,7 @@ export const Button = ({
         impactClasses[getToneFromStatus(status)][impact],
         sizeClasses[size],
         shapeClasses[shape],
-        className,
+        className
       )}
     >
       {status === "idle" ? (
@@ -105,19 +111,19 @@ export const Button = ({
         </div>
       )}
     </button>
-  )
-}
+  );
+};
 
 function StatusIcon({ status }: { status: ButtonProps["status"] }) {
   switch (status) {
     case "loading":
-      return <LoadingIcon />
+      return <LoadingIcon />;
     case "success":
-      return <CheckCircleIcon className="h-6 w-6 text-inherit" />
+      return <CheckCircleIcon className="h-6 w-6 text-inherit" />;
     case "error":
-      return <ExclamationCircleIcon className="h-6 w-6 text-inherit" />
+      return <ExclamationCircleIcon className="h-6 w-6 text-inherit" />;
     default:
-      return null
+      return null;
   }
 }
 
@@ -143,5 +149,5 @@ function LoadingIcon() {
         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
       ></path>
     </svg>
-  )
+  );
 }
