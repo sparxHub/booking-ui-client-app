@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Button,
@@ -9,23 +9,25 @@ import {
   CalendarGridHeader,
   CalendarHeaderCell,
   Heading,
-} from "react-aria-components"
+} from "react-aria-components";
 import {
   isSameDay,
   parseDateTime,
   isToday,
   getLocalTimeZone,
   today,
-} from "@internationalized/date"
-import cx from "classnames"
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid"
+} from "@internationalized/date";
+import cx from "classnames";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 
-import { useBookingAvailabilities } from "@/context/booking-availabilities"
-import { useSelectedDate } from "@/context/selected-date"
+import { useBookingAvailabilities } from "@/context/booking-availabilities";
+import { useSelectedDate } from "@/context/selected-date";
+import { useTheme } from "@/context/theme";
 
 export function Calendar() {
-  const { bookingAvailabilities } = useBookingAvailabilities()
-  const { setSelectedDate } = useSelectedDate()
+  const { bookingAvailabilities } = useBookingAvailabilities();
+  const { setSelectedDate } = useSelectedDate();
+  const { theme } = useTheme();
 
   return (
     <AriaCalendar
@@ -35,8 +37,8 @@ export function Calendar() {
       maxValue={today(getLocalTimeZone()).add({ months: 6 })}
     >
       <header className="flex items-center justify-between">
-        <Heading className="text-lg font-semibold" />
-        <MonthsNavigation />
+        <Heading className="text-lg font-semibold text-primary-800" />
+        <MonthsNavigation theme={theme} />
       </header>
 
       {/* HTML Table */}
@@ -50,7 +52,7 @@ export function Calendar() {
             {(day) => (
               <CalendarHeaderCell className="pb-4">
                 <abbr
-                  className="cursor-help text-sm font-semibold uppercase tracking-wider text-slate-700 no-underline"
+                  className="cursor-help text-sm font-semibold uppercase tracking-wider text-primary-600 no-underline"
                   title={day}
                 >
                   {day.slice(0, 3)}
@@ -64,17 +66,13 @@ export function Calendar() {
             {(date) => (
               <CalendarCell
                 date={date}
-                /* 
-                  We use the selected / disabled states to work out what 
-                  classes to apply to each cell — scroll below to 
-                  find the `getCalendarCellClasses` function.
-                */
                 className={({ isSelected, isDisabled }) =>
                   getCalendarCellClasses({
                     date,
                     isSelected,
                     isDisabled,
                     bookingAvailabilities,
+                    theme,
                   })
                 }
               >
@@ -85,7 +83,7 @@ export function Calendar() {
                       <span
                         className={cx(
                           "absolute bottom-2 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full",
-                          isSelected ? "bg-white" : "bg-primary-600",
+                          isSelected ? "bg-white" : "bg-primary-500"
                         )}
                       ></span>
                     )}
@@ -97,15 +95,19 @@ export function Calendar() {
         </>
       </CalendarGrid>
     </AriaCalendar>
-  )
+  );
 }
 
 // ----------------------------
 // Months navigation
 // ----------------------------
-function MonthsNavigation() {
-  const monthNavigationButtonClasses =
-    "grid aspect-square w-12 max-w-full place-items-center rounded-full border border-slate-300 text-slate-400 hover:text-primary-600 focus:outline-none focus:ring focus:ring-primary-400 focus:ring-offset-1 disabled:border-slate-200 disabled:text-slate-300 disabled:hover:text-slate-300"
+function MonthsNavigation({ theme }) {
+  const monthNavigationButtonClasses = cx(
+    "grid aspect-square w-12 max-w-full place-items-center rounded-full",
+    "border text-primary-700 hover:text-primary-900 focus:outline-none",
+    `border-primary-300 hover:border-primary-500 focus:ring focus:ring-primary-300 focus:ring-offset-1`
+  );
+
   return (
     <div className="flex gap-2">
       <Button slot="previous" className={monthNavigationButtonClasses}>
@@ -115,7 +117,7 @@ function MonthsNavigation() {
         <ChevronRightIcon className="ml-0.5 h-6 w-6" />
       </Button>
     </div>
-  )
+  );
 }
 
 // ----------------------------
@@ -126,13 +128,14 @@ function getCalendarCellClasses({
   isSelected,
   isDisabled,
   bookingAvailabilities,
+  theme,
 }) {
   // Working out which days have availability
   const hasAvailability = bookingAvailabilities.some((availability) =>
-    isSameDay(parseDateTime(availability.startTime), date),
-  )
+    isSameDay(parseDateTime(availability.startTime), date)
+  );
   // Today's day
-  const isCurrentDay = isToday(date, getLocalTimeZone())
+  const isCurrentDay = isToday(date, getLocalTimeZone());
 
   // Possible UI "states" of a calendar day:
   type Status =
@@ -140,30 +143,29 @@ function getCalendarCellClasses({
     | "DISABLED"
     | "VACANCY"
     | "NO_VACANCY"
-    | "TODAY_NO_VACANCY"
+    | "TODAY_NO_VACANCY";
 
   // Function to work out in which "status" the day is
   const getStatus: () => Status = () => {
-    if (isSelected) return "SELECTED"
-    if (isDisabled) return "DISABLED"
-    if (hasAvailability) return "VACANCY"
-    return isCurrentDay ? "TODAY_NO_VACANCY" : "NO_VACANCY"
-  }
+    if (isSelected) return "SELECTED";
+    if (isDisabled) return "DISABLED";
+    if (hasAvailability) return "VACANCY";
+    return isCurrentDay ? "TODAY_NO_VACANCY" : "NO_VACANCY";
+  };
 
   // Common classes for all calendar days
   const baseClasses =
-    "relative mx-auto grid aspect-square w-12 max-w-full place-items-center rounded-full focus:outline-none focus:ring focus:ring-primary-400 focus:ring-offset-1"
+  "relative mx-auto grid aspect-square w-16 sm:w-20 md:w-24 max-w-full place-items-center focus:outline-none";
 
   // Style variants for each possible UI "state"
   const statusClasses: Record<Status, string> = {
-    SELECTED: "bg-primary-600 font-bold text-white bg-stripes",
+    SELECTED: `bg-primary-900 font-bold text-white bg-stripes rounded-md`,
     DISABLED: "pointer-events-none text-slate-300",
-    VACANCY: "bg-primary-100 font-bold text-primary-700 hover:bg-primary-200",
-    NO_VACANCY: "text-slate-800 hover:bg-slate-100",
-    TODAY_NO_VACANCY:
-      "font-bold text-primary-700 hover:bg-slate-100 hover:text-slate-800",
-  }
+    VACANCY: `bg-primary-400 font-bold text-primary-200 hover:bg-primary-300 rounded-md`,
+    NO_VACANCY: "text-slate-800 hover:bg-slate-100 rounded-md",
+    TODAY_NO_VACANCY: `bg-primary-700 font-bold hover:bg-slate-100 hover:text-slate-800 rounded-md`,
+  };
 
   // Mix all classes in a blender, serve with ice 🍹
-  return cx(baseClasses, statusClasses[getStatus()])
+  return cx(baseClasses, statusClasses[getStatus()]);
 }
