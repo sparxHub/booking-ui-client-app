@@ -41,10 +41,9 @@ function Body({ children }) {
   const { theme } = useTheme();
   return (
     <body className="antialiased" data-theme={theme}>
-      <NavBar />
-      <div className="grid min-h-screen place-items-center">
+      <div className="grid min-h-screen md:place-items-center">
         <BackgroundDecoration />
-        <div className="mx-auto w-full max-w-5xl px-2 py-16 sm:px-6 lg:max-w-7xl lg:px-3 xl:px-8">
+        <div className="mx-auto w-full max-w-5xl px-2 py-8 md:py-16 sm:px-6 lg:max-w-7xl lg:px-3 xl:px-8">
           <div className="relative">{children}</div>
         </div>
       </div>

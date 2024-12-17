@@ -52,7 +52,7 @@ export function ServiceSteps({ steps }) {
       {activeLevel > 0 && (
         <button
           onClick={handleBackClick}
-          className="mb-4 inline-flex items-center text-primary-900 hover:text-primary-700"
+          className="mb-4 inline-flex items-center text-primary-900 hover:text-primary-900"
         >
           <ChevronLeftIcon className="h-5 w-5 mr-2" />
           Back
@@ -81,11 +81,11 @@ export function ServiceSteps({ steps }) {
 function ServiceCard({ item, onClick, hasNested }) {
   return (
     <div
-      className={`relative rounded-lg bg-gray-800 p-6 text-white shadow-lg cursor-pointer hover:bg-gray-700`}
+      className={`relative rounded-lg bg-primary-900 p-6 text-white shadow-lg cursor-pointer hover:bg-primary-800`}
       onClick={onClick}
     >
       <h3 className="text-xl font-bold">{item.title}</h3>
-      {item.description && <p className="mt-2 text-gray-400">{item.description}</p>}
+      {item.description && <p className="mt-2 text-primary-400">{item.description}</p>}
       {item.duration && item.type && (
         <div className="mt-4 flex items-center justify-between text-sm">
           <span className="flex items-center gap-2">
@@ -99,7 +99,7 @@ function ServiceCard({ item, onClick, hasNested }) {
         </div>
       )}
       {hasNested && (
-        <ChevronRightIcon className="absolute top-1/2 right-4 transform -translate-y-1/2 h-5 w-5 text-gray-400 hover:text-gray-200" />
+        <ChevronRightIcon className="absolute top-1/2 right-4 transform -translate-y-1/2 h-5 w-5 text-primary-400 hover:text-primary-200" />
       )}
     </div>
   );

@@ -83,7 +83,7 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="relative mx-auto max-w-3xl p-6 sm:p-8 xl:p-10">
+    <div className="relative mx-auto max-w-3xl p-0 sm:p-4 xl:p-10">
       {/* Centered Content */}
       <div className="text-center">
         {/* Avatar Image */}
@@ -100,8 +100,8 @@ export default function HomePage() {
           />
         </div>
         {/* Title and Description */}
-        <h1 className="text-4xl font-bold text-primary-900">Lula Gym</h1>
-        <p className="mt-2 text-lg text-primary-800">
+        <h1 className="text-4xl font-bold text-primary-800">Lula Gym</h1>
+        <p className="mt-2 text-lg text-primary-800 text-left sm:text-center">
           Want to get fit and enjoy the journey? <br />
           Book a personal training session with one of our talented trainers.
         </p>
