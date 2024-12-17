@@ -20,7 +20,7 @@ export function TimePicker() {
   const [selectedTime, setSelectedTime] = useState(null)
   const formatter = useDateFormatter({ dateStyle: "full" })
   const availabilities = bookingAvailabilities.filter((availability) =>
-    isSameDay(parseDateTime(availability.startTime), selectedDate),
+    isSameDay(parseDateTime(availability.startTime.split("T")[0]), selectedDate),
   )
   const hasAvailability = availabilities.length > 0
   return (

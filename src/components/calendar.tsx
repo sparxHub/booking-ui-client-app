@@ -131,8 +131,9 @@ function getCalendarCellClasses({
   theme,
 }) {
   // Working out which days have availability
-  const hasAvailability = bookingAvailabilities.some((availability) =>
-    isSameDay(parseDateTime(availability.startTime), date)
+  const hasAvailability = bookingAvailabilities.some((availability) => {
+    return isSameDay(parseDateTime(availability.startTime.split("T")[0]), date);
+  }
   );
   // Today's day
   const isCurrentDay = isToday(date, getLocalTimeZone());
