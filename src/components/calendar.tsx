@@ -25,7 +25,7 @@ import { useSelectedDate } from "@/context/selected-date";
 import { useTheme } from "@/context/theme";
 
 export function Calendar() {
-  const { bookingAvailabilities } = useBookingAvailabilities();
+  const { bookings } = useBookingAvailabilities();
   const { setSelectedDate } = useSelectedDate();
   const { theme } = useTheme();
 
@@ -71,7 +71,7 @@ export function Calendar() {
                     date,
                     isSelected,
                     isDisabled,
-                    bookingAvailabilities,
+                    bookings,
                     theme,
                   })
                 }
@@ -127,13 +127,12 @@ function getCalendarCellClasses({
   date,
   isSelected,
   isDisabled,
-  bookingAvailabilities,
+  bookings,
   theme,
 }) {
   // Working out which days have availability
-  const hasAvailability = bookingAvailabilities.some((availability) => {
-    return isSameDay(parseDateTime(availability.startTime.split("T")[0]), date);
-  }
+  const hasAvailability = bookings.some((booking) =>
+    isSameDay(parseDateTime(booking.startTime.split("T")[0]), date)
   );
   // Today's day
   const isCurrentDay = isToday(date, getLocalTimeZone());

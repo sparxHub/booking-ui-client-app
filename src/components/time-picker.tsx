@@ -16,13 +16,13 @@ import { Button } from "./shared/button"
 
 export function TimePicker() {
   const { selectedDate } = useSelectedDate()
-  const { bookingAvailabilities } = useBookingAvailabilities()
+  const { bookings } = useBookingAvailabilities();
   const [selectedTime, setSelectedTime] = useState(null)
   const formatter = useDateFormatter({ dateStyle: "full" })
-  const availabilities = bookingAvailabilities.filter((availability) =>
-    isSameDay(parseDateTime(availability.startTime.split("T")[0]), selectedDate),
-  )
-  const hasAvailability = availabilities.length > 0
+  const availabilities = bookings.filter((booking) =>
+    isSameDay(parseDateTime(booking.startTime.split("T")[0]), selectedDate)
+  );
+    const hasAvailability = availabilities.length > 0
   return (
     <div className="relative grid h-full grid-rows-[auto,1fr] overflow-hidden px-4 sm:px-8 lg:px-6 xl:px-10">
       {/* Scroll  mask */}

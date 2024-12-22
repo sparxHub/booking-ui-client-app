@@ -3,6 +3,8 @@ export type Availability = {
   endTime: string
 }
 
+// import { Availability } from "@/domain/bookingTypes"
+
 export const generateBookingAvailabilities = (): Availability[] => {
   // Bookable time range
   const START_TIME = 5

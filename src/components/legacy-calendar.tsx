@@ -134,7 +134,7 @@ function CalendarGrid({ state, ...props }) {
 // ----------------------------
 function CalendarCell({ state, date }) {
   const ref = useRef<HTMLDivElement>(null)
-  const { bookingAvailabilities } = useBookingAvailabilities()
+  const { bookings } = useBookingAvailabilities()
   const {
     cellProps,
     buttonProps,
@@ -144,9 +144,9 @@ function CalendarCell({ state, date }) {
     formattedDate,
   } = useCalendarCell({ date }, state, ref)
 
-  const hasAvailability = bookingAvailabilities.some((availability) =>
-    isSameDay(parseDateTime(availability.startTime), date),
-  )
+  const hasAvailability = bookings.some((booking) =>
+    isSameDay(parseDateTime(booking.startTime.split("T")[0]), date)
+  );
   const isCurrentDay = isToday(date, getLocalTimeZone())
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
