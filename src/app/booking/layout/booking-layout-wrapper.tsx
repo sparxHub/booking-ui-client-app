@@ -8,6 +8,7 @@ import { SelectedDateProvider } from "@/context/selected-date"
 import { BookingAvailabilitiesProvider } from "@/context/booking-availabilities"
 
 import { BookingShell } from "@/app/booking/layout/booking-shell"
+import { BookingTypesProvider } from "@/context/booking-types"
 
 const openSans = Open_Sans({
   display: "swap",
@@ -32,9 +33,11 @@ function Body({ children }) {
   const { theme } = useTheme()
   return (
       <SelectedDateProvider>
-        <BookingAvailabilitiesProvider>
-          <BookingShell>{children}</BookingShell>
-        </BookingAvailabilitiesProvider>
+        <BookingTypesProvider>
+          <BookingAvailabilitiesProvider>
+            <BookingShell>{children}</BookingShell>
+          </BookingAvailabilitiesProvider>
+        </BookingTypesProvider>
       </SelectedDateProvider>
   )
 }

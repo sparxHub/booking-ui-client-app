@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-
+import { useBookingTypes } from '@/context/booking-types';
 import { ServiceSteps } from '@/components/service-steps';
 import { NavBar } from '@/components/navbar';
 import heroImage from '@/../public/img/social-large.jpg';
@@ -16,65 +16,33 @@ const customLoader = ({ src, width, quality }) => {
 const imageSrc = heroImage?.src || '/img/social-large.jpg';
 
 export default function HomePage() {
+  const { bookingTypes, loading, error } = useBookingTypes();
+
+  // Map `bookingTypes` to `serviceData`
   const serviceData = [
     {
       title: 'Classes',
-      items: [
-        {
-          title: 'Yoga',
-          description: 'Improve flexibility and core strength.',
-          duration: '45m',
-          type: 'Group',
-          action: '/booking?yoga',
-        },
-        {
-          title: 'Power',
-          description: 'High-energy strength training session.',
-          duration: '60m',
-          type: 'Group',
-          action: '/booking?power',
-        },
-        {
-          title: 'Mix',
-          description: 'Combination of cardio and strength.',
-          duration: '50m',
-          type: 'Group',
-          action: '/booking?mix',
-        },
-        {
-          title: 'Mix',
-          description: 'Combination of cardio and strength.',
-          duration: '50m',
-          type: 'Group',
-          action: '/booking?mix',
-        },
-        {
-          title: 'HIIT',
-          description: 'Combination of cardio and strength.',
-          duration: '50m',
-          type: 'Group',
-          action: '/booking?mix',
-        },
-      ],
+      items: bookingTypes
+        .filter((type) => type.sessionType === 'classSession')
+        .map((type) => ({
+          title: type.title,
+          description: type.details || 'Detailed description not available.',
+          duration: `${type.duration || 45}m`,
+          type: 'Group', // Stubbed value
+          action: `/booking?type=${type._id}`, // Dynamic action based on booking type ID
+        })),
     },
     {
       title: 'Private Classes',
-      items: [
-        {
-          title: 'Yoga with Dave',
-          description: '1-on-1 private yoga session.',
-          duration: '30m',
-          type: 'Private',
-          action: '/booking?dave',
-        },
-        {
-          title: 'Yoga with Natalie',
-          description: 'Personalized yoga instruction.',
-          duration: '30m',
-          type: 'Private',
-          action: '/booking?natalie',
-        },
-      ],
+      items: bookingTypes
+        .filter((type) => type.sessionType === 'personalSession')
+        .map((type) => ({
+          title: type.title,
+          description: type.details || 'Personalized session details not available.',
+          duration: `${type.duration || 30}m`,
+          type: 'Private', // Stubbed value
+          action: `/booking?type=${type._id}`, // Dynamic action based on booking type ID
+        })),
     },
     {
       title: 'External Link',
@@ -111,7 +79,13 @@ export default function HomePage() {
       <NavBar />
 
       {/* Service Steps */}
-      <ServiceSteps steps={serviceData} />
+      {loading ? (
+        <p>Loading services...</p>
+      ) : error ? (
+        <p>Error loading services: {error}</p>
+      ) : (
+        <ServiceSteps steps={serviceData} />
+      )}
 
       {/* Logo Image at Bottom Center */}
       <div className="absolute left-1/2 -translate-x-1/2 transform pt-10">
