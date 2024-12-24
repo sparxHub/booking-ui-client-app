@@ -33,12 +33,13 @@ export default function HomePage() {
         })),
     },
     {
-      title: 'Private Classes',
+      title: 'Personal Classes',
       items: bookingTypes
         .filter((type) => type.sessionType === 'personalSession')
         .map((type) => ({
           title: type.title,
-          description: type.details || 'Personalized session details not available.',
+          description:
+            type.details || 'Personalized session details not available.',
           duration: `${type.duration || 30}m`,
           type: 'Private', // Stubbed value
           action: `/booking?type=${type._id}`, // Dynamic action based on booking type ID
@@ -48,7 +49,13 @@ export default function HomePage() {
       title: 'External Link',
       url: 'https://example.com',
     },
-  ];
+  ].filter((section) => {
+    // Remove sections where `items` is an empty array (for `Classes` and `Personal Classes` only)
+    if (section.items !== undefined) {
+      return section.items.length > 0;
+    }
+    return true; // Keep sections without `items` (e.g., 'External Link')
+  });
 
   return (
     <div className="relative mx-auto max-w-3xl p-0 sm:p-4 xl:p-10">
@@ -69,7 +76,7 @@ export default function HomePage() {
         </div>
         {/* Title and Description */}
         <h1 className="text-4xl font-bold text-primary-800">Lula Gym</h1>
-        <p className="mt-2 text-lg text-primary-800 text-left sm:text-center">
+        <p className="mt-2 text-left text-lg text-primary-800 sm:text-center">
           Want to get fit and enjoy the journey? <br />
           Book a personal training session with one of our talented trainers.
         </p>

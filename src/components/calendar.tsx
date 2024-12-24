@@ -23,11 +23,30 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useBookingAvailabilities } from "@/context/booking-availabilities";
 import { useSelectedDate } from "@/context/selected-date";
 import { useTheme } from "@/context/theme";
+import { BookingType } from "@/domain/bookingTypes";
 
-export function Calendar() {
+export function Calendar({
+  mode,
+  selectedBookingType,
+}: {
+  mode: "personal" | "class" | "all_classes";
+  selectedBookingType: BookingType | null;
+}) {
   const { bookings } = useBookingAvailabilities();
   const { setSelectedDate } = useSelectedDate();
   const { theme } = useTheme();
+
+  // Log mode and selectedBookingType for debugging
+  console.log("Mode:", mode);
+  console.log("Selected Booking Type:", selectedBookingType);
+
+  // Filter bookings based on mode and selectedBookingType
+  const filteredBookings =
+    mode === "personal"
+      ? bookings.filter((booking) => booking.typeId === selectedBookingType?._id)
+      : mode === "class"
+      ? bookings.filter((booking) => booking.typeId === selectedBookingType?._id)
+      : bookings; // all_classes includes all bookings
 
   return (
     <AriaCalendar
@@ -71,7 +90,7 @@ export function Calendar() {
                     date,
                     isSelected,
                     isDisabled,
-                    bookings,
+                    bookings: filteredBookings,
                     theme,
                   })
                 }
@@ -155,7 +174,7 @@ function getCalendarCellClasses({
 
   // Common classes for all calendar days
   const baseClasses =
-  "relative mx-auto grid aspect-square w-16 sm:w-20 md:w-24 max-w-full place-items-center focus:outline-none";
+    "relative mx-auto grid aspect-square w-16 sm:w-20 md:w-24 max-w-full place-items-center focus:outline-none";
 
   // Style variants for each possible UI "state"
   const statusClasses: Record<Status, string> = {
