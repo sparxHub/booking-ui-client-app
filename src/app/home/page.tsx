@@ -29,7 +29,7 @@ export default function HomePage() {
           description: type.details || 'Detailed description not available.',
           duration: `${type.duration || 45}m`,
           type: 'Group', // Stubbed value
-          action: `/booking?type=${type._id}`, // Dynamic action based on booking type ID
+          action: `/booking?type=${type.typeId}`, // Dynamic action based on booking type ID
         })),
     },
     {
@@ -42,7 +42,7 @@ export default function HomePage() {
             type.details || 'Personalized session details not available.',
           duration: `${type.duration || 30}m`,
           type: 'Private', // Stubbed value
-          action: `/booking?type=${type._id}`, // Dynamic action based on booking type ID
+          action: `/booking?type=${type.typeId}`, // Dynamic action based on booking type ID
         })),
     },
     {

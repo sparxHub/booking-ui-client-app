@@ -23,30 +23,39 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { useBookingAvailabilities } from "@/context/booking-availabilities";
 import { useSelectedDate } from "@/context/selected-date";
 import { useTheme } from "@/context/theme";
-import { BookingType } from "@/domain/bookingTypes";
+import { useEffect, useState } from "react";
+import { Booking } from "@/domain/bookings"; // Import Booking type
 
-export function Calendar({
-  mode,
-  selectedBookingType,
-}: {
-  mode: "personal" | "class" | "all_classes";
-  selectedBookingType: BookingType | null;
-}) {
+export function Calendar({ mode, selectedBookingType }) {
   const { bookings } = useBookingAvailabilities();
   const { setSelectedDate } = useSelectedDate();
   const { theme } = useTheme();
 
-  // Log mode and selectedBookingType for debugging
-  console.log("Mode:", mode);
-  console.log("Selected Booking Type:", selectedBookingType);
+  // State to hold filtered bookings with explicit type annotation
+  const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
 
-  // Filter bookings based on mode and selectedBookingType
-  const filteredBookings =
-    mode === "personal"
-      ? bookings.filter((booking) => booking.typeId === selectedBookingType?._id)
-      : mode === "class"
-      ? bookings.filter((booking) => booking.typeId === selectedBookingType?._id)
-      : bookings; // all_classes includes all bookings
+  useEffect(() => {
+    // Filter bookings based on mode or selectedBookingType
+    const filter = bookings.filter((booking) => {
+      console.log("booking:", booking);
+      console.log("selectedBookingType:", selectedBookingType);
+
+      if (mode === "personal") {
+        return (
+          booking.typeId === selectedBookingType?.typeId 
+        );
+      } else if (mode === "class") {
+        return (
+          booking.typeId === selectedBookingType?.typeId 
+        );
+      }
+
+      return true; // Show all bookings for "all_classes"
+    });
+
+    console.log("Filtered Bookings Updated:", filter);
+    setFilteredBookings(filter);
+  }, [bookings, mode, selectedBookingType]);
 
   return (
     <AriaCalendar
@@ -90,7 +99,7 @@ export function Calendar({
                     date,
                     isSelected,
                     isDisabled,
-                    bookings: filteredBookings,
+                    bookings: bookings,
                     theme,
                   })
                 }
@@ -142,49 +151,38 @@ function MonthsNavigation({ theme }) {
 // ----------------------------
 // Calendar cell styles
 // ----------------------------
-function getCalendarCellClasses({
-  date,
-  isSelected,
-  isDisabled,
-  bookings,
-  theme,
-}) {
-  // Working out which days have availability
-  const hasAvailability = bookings.some((booking) =>
-    isSameDay(parseDateTime(booking.startTime.split("T")[0]), date)
-  );
-  // Today's day
+function getCalendarCellClasses({ date, isSelected, isDisabled, bookings, theme }) {
+  const hasAvailability = bookings.some((booking) => {
+    const bookingDate = parseDateTime(booking.startTime.split("T")[0]);
+    const isSame = isSameDay(date, bookingDate);
+
+    // console.log(
+    //   `Checking Booking: ${booking._id}, Booking Date: ${bookingDate}, Cell Date: ${date}, Match: ${isSame}`
+    // );
+
+    return isSame;
+  });
+
   const isCurrentDay = isToday(date, getLocalTimeZone());
 
-  // Possible UI "states" of a calendar day:
-  type Status =
-    | "SELECTED"
-    | "DISABLED"
-    | "VACANCY"
-    | "NO_VACANCY"
-    | "TODAY_NO_VACANCY";
-
-  // Function to work out in which "status" the day is
-  const getStatus: () => Status = () => {
+  const getStatus = () => {
     if (isSelected) return "SELECTED";
     if (isDisabled) return "DISABLED";
     if (hasAvailability) return "VACANCY";
     return isCurrentDay ? "TODAY_NO_VACANCY" : "NO_VACANCY";
   };
 
-  // Common classes for all calendar days
   const baseClasses =
     "relative mx-auto grid aspect-square w-16 sm:w-20 md:w-24 max-w-full place-items-center focus:outline-none";
 
-  // Style variants for each possible UI "state"
-  const statusClasses: Record<Status, string> = {
-    SELECTED: `bg-primary-900 font-bold text-white bg-stripes rounded-md`,
+  const statusClasses = {
+    SELECTED: "bg-primary-900 font-bold text-white bg-stripes rounded-md",
     DISABLED: "pointer-events-none text-slate-300",
-    VACANCY: `bg-primary-400 font-bold text-primary-200 hover:bg-primary-300 rounded-md`,
+    VACANCY: "bg-primary-400 font-bold text-primary-200 hover:bg-primary-300 rounded-md",
     NO_VACANCY: "text-slate-800 hover:bg-slate-100 rounded-md",
-    TODAY_NO_VACANCY: `bg-primary-700 font-bold hover:bg-slate-100 hover:text-slate-800 rounded-md`,
+    TODAY_NO_VACANCY: "bg-primary-700 font-bold hover:bg-slate-100 hover:text-slate-800 rounded-md",
   };
 
-  // Mix all classes in a blender, serve with ice 🍹
+  // console.log("Status for date:", date.toString(), getStatus());
   return cx(baseClasses, statusClasses[getStatus()]);
 }

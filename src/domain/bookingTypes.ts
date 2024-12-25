@@ -35,7 +35,7 @@ export interface Availability {
  */
 export interface BookingType {
   /** Unique identifier for the booking type */
-  _id: string;
+  typeId: string;
 
   /** Title or name of the booking type */
   title: string;
