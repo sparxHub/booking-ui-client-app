@@ -1,31 +1,39 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import cx from "classnames"
-import { useDateFormatter } from "react-aria"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import cx from "classnames";
+import { useDateFormatter } from "react-aria";
 import {
   getLocalTimeZone,
   isSameDay,
   parseDateTime,
-} from "@internationalized/date"
+} from "@internationalized/date";
 
-import { useSelectedDate } from "@/context/selected-date"
-import { useBookingAvailabilities } from "@/context/booking-availabilities"
-import { Button } from "./shared/button"
+import { useSelectedDate } from "@/context/selected-date";
+import { Button } from "./shared/button";
+import { Booking } from "@/domain/bookings"; // Import Booking type
 
-export function TimePicker() {
-  const { selectedDate } = useSelectedDate()
-  const { bookings } = useBookingAvailabilities();
-  const [selectedTime, setSelectedTime] = useState(null)
-  const formatter = useDateFormatter({ dateStyle: "full" })
+export function TimePicker({
+  bookings,
+  mode,
+}: {
+  bookings: Booking[];
+  mode: "class" | "personal" | "all_classes";
+}) {
+  const { selectedDate } = useSelectedDate();
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const formatter = useDateFormatter({ dateStyle: "full" });
+
+  // Filter availabilities for the selected date
   const availabilities = bookings.filter((booking) =>
     isSameDay(parseDateTime(booking.startTime.split("T")[0]), selectedDate)
   );
-    const hasAvailability = availabilities.length > 0
+  const hasAvailability = availabilities.length > 0;
+
   return (
     <div className="relative grid h-full grid-rows-[auto,1fr] overflow-hidden px-4 sm:px-8 lg:px-6 xl:px-10">
-      {/* Scroll  mask */}
+      {/* Scroll mask */}
       <div className="pointer-events-none absolute inset-x-8 bottom-0 z-10 hidden h-40 bg-gradient-to-t from-white md:block lg:inset-x-6 xl:inset-x-10"></div>
 
       <div className="flex h-12 items-center justify-center md:justify-start">
@@ -41,7 +49,7 @@ export function TimePicker() {
               "absolute -inset-x-4 -inset-y-1 blur-sm backdrop-saturate-0 transition",
               hasAvailability
                 ? "pointer-events-none z-0 opacity-0 duration-300 ease-out"
-                : "z-10 opacity-100 ease-in",
+                : "z-10 opacity-100 ease-in"
             )}
           ></div>
 
@@ -53,23 +61,21 @@ export function TimePicker() {
                   selectedTime={selectedTime}
                   setSelectedTime={setSelectedTime}
                   availability={availability}
-                ></TimeSlot>
+                />
               ))}
             </ul>
           ) : (
-            // Empty list placeholder (faks list)
+            // Empty list placeholder
             <ul className="space-y-2 py-2" aria-hidden="true">
-              {["8:00 AM", "9:00 AM", "2:00 PM", "4:00 PM"].map((time) => {
-                return (
-                  <li
-                    key={time}
-                    className="rounded-lg bg-primary-100 px-5 py-3 text-center font-semibold text-primary-700 opacity-50
-                    [@supports_not_(backdrop-filter:blur(0))]:line-through [@supports_not_(backdrop-filter:blur(0))]:opacity-30"
-                  >
-                    {time}
-                  </li>
-                )
-              })}
+              {["8:00 AM", "9:00 AM", "2:00 PM", "4:00 PM"].map((time) => (
+                <li
+                  key={time}
+                  className="rounded-lg bg-primary-100 px-5 py-3 text-center font-semibold text-primary-700 opacity-50
+                  [@supports_not_(backdrop-filter:blur(0))]:line-through [@supports_not_(backdrop-filter:blur(0))]:opacity-30"
+                >
+                  {time}
+                </li>
+              ))}
             </ul>
           )}
         </div>
@@ -80,28 +86,37 @@ export function TimePicker() {
         )}
       </div>
     </div>
-  )
+  );
 }
 
 // ------------------------------
 // Implementation components
 // ------------------------------
 
-function TimeSlot({ availability, selectedTime, setSelectedTime }) {
-  const router = useRouter()
-  const timeFormatter = useDateFormatter({ timeStyle: "short" })
-  const isSelected = selectedTime === availability.startTime
+function TimeSlot({
+  availability,
+  selectedTime,
+  setSelectedTime,
+}: {
+  availability: Booking;
+  selectedTime: string | null;
+  setSelectedTime: (time: string | null) => void;
+}) {
+  const router = useRouter();
+  const timeFormatter = useDateFormatter({ timeStyle: "short" });
+  const isSelected = selectedTime === availability.startTime;
+
   return (
     <li
       className={cx(
         "flex items-center gap-1 overflow-hidden rounded",
-        isSelected && "bg-primary-600 bg-stripes",
+        isSelected && "bg-primary-600 bg-stripes"
       )}
     >
       <div
         className={cx(
           "shrink-0 transition-all",
-          isSelected ? "basis-1/2 text-white ease-out" : "basis-full",
+          isSelected ? "basis-1/2 text-white ease-out" : "basis-full"
         )}
       >
         <Button
@@ -109,7 +124,7 @@ function TimeSlot({ availability, selectedTime, setSelectedTime }) {
           disabled={isSelected}
           className={cx(
             "w-full focus:ring-inset focus:ring-offset-0 active:translate-y-0",
-            isSelected && "text-white disabled:opacity-100",
+            isSelected && "text-white disabled:opacity-100"
           )}
           onClick={() => setSelectedTime(availability.startTime)}
         >
@@ -130,5 +145,5 @@ function TimeSlot({ availability, selectedTime, setSelectedTime }) {
         </Button>
       </div>
     </li>
-  )
+  );
 }

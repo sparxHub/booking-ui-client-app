@@ -19,43 +19,13 @@ import {
 } from "@internationalized/date";
 import cx from "classnames";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
-
-import { useBookingAvailabilities } from "@/context/booking-availabilities";
 import { useSelectedDate } from "@/context/selected-date";
 import { useTheme } from "@/context/theme";
-import { useEffect, useState } from "react";
-import { Booking } from "@/domain/bookings"; // Import Booking type
+import { Booking } from "@/domain/bookings";
 
-export function Calendar({ mode, selectedBookingType }) {
-  const { bookings } = useBookingAvailabilities();
+export function Calendar({ bookings }: { bookings: Booking[] }) {
   const { setSelectedDate } = useSelectedDate();
   const { theme } = useTheme();
-
-  // State to hold filtered bookings with explicit type annotation
-  const [filteredBookings, setFilteredBookings] = useState<Booking[]>([]);
-
-  useEffect(() => {
-    // Filter bookings based on mode or selectedBookingType
-    const filter = bookings.filter((booking) => {
-      console.log("booking:", booking);
-      console.log("selectedBookingType:", selectedBookingType);
-
-      if (mode === "personal") {
-        return (
-          booking.typeId === selectedBookingType?.typeId 
-        );
-      } else if (mode === "class") {
-        return (
-          booking.typeId === selectedBookingType?.typeId 
-        );
-      }
-
-      return true; // Show all bookings for "all_classes"
-    });
-
-    console.log("Filtered Bookings Updated:", filter);
-    setFilteredBookings(filter);
-  }, [bookings, mode, selectedBookingType]);
 
   return (
     <AriaCalendar
@@ -69,13 +39,11 @@ export function Calendar({ mode, selectedBookingType }) {
         <MonthsNavigation theme={theme} />
       </header>
 
-      {/* HTML Table */}
       <CalendarGrid
         className="mt-4 w-full table-fixed border-separate border-spacing-2"
         weekdayStyle="long"
       >
         <>
-          {/* Header row (week days) */}
           <CalendarGridHeader>
             {(day) => (
               <CalendarHeaderCell className="pb-4">
@@ -89,7 +57,6 @@ export function Calendar({ mode, selectedBookingType }) {
             )}
           </CalendarGridHeader>
 
-          {/* Body rows (dates) */}
           <CalendarGridBody>
             {(date) => (
               <CalendarCell
@@ -99,7 +66,7 @@ export function Calendar({ mode, selectedBookingType }) {
                     date,
                     isSelected,
                     isDisabled,
-                    bookings: bookings,
+                    bookings,
                     theme,
                   })
                 }
@@ -126,9 +93,6 @@ export function Calendar({ mode, selectedBookingType }) {
   );
 }
 
-// ----------------------------
-// Months navigation
-// ----------------------------
 function MonthsNavigation({ theme }) {
   const monthNavigationButtonClasses = cx(
     "grid aspect-square w-12 max-w-full place-items-center rounded-full",
@@ -148,20 +112,10 @@ function MonthsNavigation({ theme }) {
   );
 }
 
-// ----------------------------
-// Calendar cell styles
-// ----------------------------
 function getCalendarCellClasses({ date, isSelected, isDisabled, bookings, theme }) {
-  const hasAvailability = bookings.some((booking) => {
-    const bookingDate = parseDateTime(booking.startTime.split("T")[0]);
-    const isSame = isSameDay(date, bookingDate);
-
-    // console.log(
-    //   `Checking Booking: ${booking._id}, Booking Date: ${bookingDate}, Cell Date: ${date}, Match: ${isSame}`
-    // );
-
-    return isSame;
-  });
+  const hasAvailability = bookings.some((booking) =>
+    isSameDay(parseDateTime(booking.startTime.split("T")[0]), date)
+  );
 
   const isCurrentDay = isToday(date, getLocalTimeZone());
 
@@ -183,6 +137,5 @@ function getCalendarCellClasses({ date, isSelected, isDisabled, bookings, theme 
     TODAY_NO_VACANCY: "bg-primary-700 font-bold hover:bg-slate-100 hover:text-slate-800 rounded-md",
   };
 
-  // console.log("Status for date:", date.toString(), getStatus());
   return cx(baseClasses, statusClasses[getStatus()]);
 }

@@ -4,15 +4,33 @@ import { useBookingTypes } from "@/context/booking-types";
 import { Calendar } from "../../components/calendar";
 import { TimePicker } from "../../components/time-picker";
 import { TimezonePicker } from "../../components/timezone-picker";
+import { useBookingAvailabilities } from "@/context/booking-availabilities";
 
 export default function BookingPage() {
-  const { 
+  const {
     bookingTypes,
     selectedBookingType,
-    mode, 
-    loading: loadingBookingTypes, 
-    error: errorBookingTypes 
+    mode,
+    loading: loadingBookingTypes,
+    error: errorBookingTypes,
   } = useBookingTypes();
+  const { bookings } = useBookingAvailabilities();
+
+  // Filter bookings based on mode and selectedBookingType
+  const filteredBookings = bookings.filter((booking) => {
+    if (mode === "personal") {
+      return (
+        booking.typeId === selectedBookingType?.typeId &&
+        booking.sessionType === "personalSession"
+      );
+    } else if (mode === "class") {
+      return (
+        booking.typeId === selectedBookingType?.typeId &&
+        booking.sessionType === "classSession"
+      );
+    }
+    return true; // Show all bookings for "all_classes"
+  });
 
   if (loadingBookingTypes) {
     return (
@@ -37,10 +55,6 @@ export default function BookingPage() {
   return (
     <div className="mx-auto grid h-full max-w-lg grid-rows-[auto,1fr] gap-8 md:max-w-none">
       <div className="mt-10 px-4 sm:px-8 xl:px-10">
-        <p>Mode: {mode}</p>
-        {mode === 'all_classes' && <div>Displaying all available classes...</div>}
-        {mode === 'class' && <div>Displaying class session details...</div>}
-        {mode === 'personal' && <div>Displaying personal session details...</div>}
         <h1 className="text-center text-2xl font-bold md:text-left">
           Select a Date & Time
         </h1>
@@ -48,14 +62,15 @@ export default function BookingPage() {
       <div className="grid min-h-0 md:grid-cols-[1fr,360px] md:divide-x lg:grid-cols-[1fr,40%] xl:grid-cols-[1fr,360px]">
         <div>
           <div className="px-6 sm:px-8 xl:px-10">
-            <Calendar mode={mode} selectedBookingType={selectedBookingType} />
+            {/* Pass filteredBookings as a prop to Calendar */}
+            <Calendar bookings={filteredBookings} />
           </div>
           <div className="p-4 sm:p-8 xl:p-10">
             <TimezonePicker />
           </div>
         </div>
         <div className="min-h-0">
-          <TimePicker />
+          <TimePicker bookings={filteredBookings} mode={mode}/>
         </div>
       </div>
     </div>
