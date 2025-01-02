@@ -33,10 +33,10 @@ export interface Booking {
   maxBookings: number | null;
 
   /** List of member IDs who have confirmed the booking */
-  bookedMemberIds: string[];
+  bookedMemberIds: string[] | null;
 
   /** List of member IDs who are on the waiting list */
-  waitingMemberIds: string[];
+  waitingMemberIds: string[] | null;
 
   /** Remote session details */
   remoteSession: {

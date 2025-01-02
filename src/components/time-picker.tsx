@@ -11,8 +11,7 @@ import {
 } from "@internationalized/date";
 
 import { useSelectedDate } from "@/context/selected-date";
-import { Button } from "./shared/button";
-import { Booking } from "@/domain/bookings"; // Import Booking type
+import { Booking } from "@/domain/bookings";
 
 export function TimePicker({
   bookings,
@@ -25,7 +24,6 @@ export function TimePicker({
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const formatter = useDateFormatter({ dateStyle: "full" });
 
-  // Filter availabilities for the selected date
   const availabilities = bookings.filter((booking) =>
     isSameDay(parseDateTime(booking.startTime.split("T")[0]), selectedDate)
   );
@@ -33,117 +31,156 @@ export function TimePicker({
 
   return (
     <div className="relative grid h-full grid-rows-[auto,1fr] overflow-hidden px-4 sm:px-8 lg:px-6 xl:px-10">
-      {/* Scroll mask */}
-      <div className="pointer-events-none absolute inset-x-8 bottom-0 z-10 hidden h-40 bg-gradient-to-t from-white md:block lg:inset-x-6 xl:inset-x-10"></div>
-
       <div className="flex h-12 items-center justify-center md:justify-start">
         <h2 className="text-lg font-semibold">
           {formatter.format(selectedDate.toDate(getLocalTimeZone()))}
         </h2>
       </div>
-      <div className="-mx-4 mt-4 overflow-y-auto px-4">
-        <div className="relative">
-          {/* Blur mask for days without availability */}
-          <div
-            className={cx(
-              "absolute -inset-x-4 -inset-y-1 blur-sm backdrop-saturate-0 transition",
-              hasAvailability
-                ? "pointer-events-none z-0 opacity-0 duration-300 ease-out"
-                : "z-10 opacity-100 ease-in"
-            )}
-          ></div>
 
-          {hasAvailability ? (
-            <ul className="space-y-2 pt-2 sm:pb-8 md:pb-40">
-              {availabilities.map((availability) => (
-                <TimeSlot
-                  key={availability.startTime}
-                  selectedTime={selectedTime}
-                  setSelectedTime={setSelectedTime}
-                  availability={availability}
-                />
-              ))}
-            </ul>
-          ) : (
-            // Empty list placeholder
-            <ul className="space-y-2 py-2" aria-hidden="true">
-              {["8:00 AM", "9:00 AM", "2:00 PM", "4:00 PM"].map((time) => (
-                <li
-                  key={time}
-                  className="rounded-lg bg-primary-100 px-5 py-3 text-center font-semibold text-primary-700 opacity-50
-                  [@supports_not_(backdrop-filter:blur(0))]:line-through [@supports_not_(backdrop-filter:blur(0))]:opacity-30"
-                >
-                  {time}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        {!hasAvailability && (
-          <p className="mt-2 pb-4 text-center text-sm text-slate-500 sm:pb-8">
-            No booking availabilities on this day.
-          </p>
-        )}
+      <div className="-mx-4 mt-4 overflow-y-auto px-4">
+  <div className="relative">
+    {hasAvailability ? (
+      <ul className="space-y-2 pt-2 sm:pb-8 md:pb-40">
+        {availabilities.map((availability) => (
+          <TimeSlot
+            key={availability.startTime}
+            availability={availability}
+            mode={mode}
+            selectedTime={selectedTime}
+            setSelectedTime={setSelectedTime}
+          />
+        ))}
+      </ul>
+    ) : (
+      <div className="relative">
+        {/* Add blur effect here */}
+        <ul
+          className="space-y-2 py-2 blur-sm"
+          style={{
+            backdropFilter: "blur(4px)", // Apply blur effect
+            WebkitBackdropFilter: "blur(4px)", // Safari compatibility
+          }}
+          aria-hidden="true"
+        >
+          {["8:00 AM", "9:00 AM", "2:00 PM", "4:00 PM"].map((time) => (
+            <li
+              key={time}
+              className="rounded-lg bg-primary-100 px-5 py-3 text-center font-semibold text-primary-700 opacity-40
+              [@supports_not_(backdrop-filter:blur(0))]:line-through [@supports_not_(backdrop-filter:blur(0))]:opacity-20"
+            >
+              {time}
+            </li>
+          ))}
+        </ul>
+        {/* Fallback text */}
+        <p className="mt-2 pb-4 text-center text-sm text-slate-500 sm:pb-8">
+          No booking availabilities on this day.
+        </p>
       </div>
+    )}
+  </div>
+</div>
     </div>
   );
 }
 
 // ------------------------------
-// Implementation components
+// TimeSlot Component
 // ------------------------------
-
 function TimeSlot({
   availability,
   selectedTime,
   setSelectedTime,
+  mode,
 }: {
   availability: Booking;
   selectedTime: string | null;
   setSelectedTime: (time: string | null) => void;
+  mode: "class" | "personal" | "all_classes";
 }) {
   const router = useRouter();
   const timeFormatter = useDateFormatter({ timeStyle: "short" });
   const isSelected = selectedTime === availability.startTime;
 
+  const bookedCount = availability.bookedMemberIds?.length ?? 0;
+  const maxBookings = availability.maxBookings || 1;
+  const availableSeats = maxBookings - bookedCount;
+  const availabilityRate = bookedCount / maxBookings;
+
+  const seatColor =
+    availabilityRate <= 0.3
+      ? "text-red-600"
+      : availabilityRate <= 0.5
+      ? "text-yellow-600"
+      : "text-green-600";
+
   return (
     <li
       className={cx(
-        "flex items-center gap-1 overflow-hidden rounded",
-        isSelected && "bg-primary-600 bg-stripes"
+        "relative flex flex-col items-center justify-between rounded-lg border px-4 py-3 transition-all cursor-pointer",
+        isSelected ? "bg-primary-600 text-white" : "bg-white"
       )}
+      onClick={() => setSelectedTime(availability.startTime)}
     >
-      <div
-        className={cx(
-          "shrink-0 transition-all",
-          isSelected ? "basis-1/2 text-white ease-out" : "basis-full"
+      <div className="flex w-full justify-between items-center">
+        {mode === "all_classes" ? (
+          <span
+            className="max-w-[75%] overflow-hidden text-ellipsis whitespace-nowrap text-lg font-semibold"
+            title={availability.typeId}
+          >
+            {availability.typeId}
+          </span>
+        ) : (
+          <span className="text-lg font-semibold">
+            {timeFormatter.format(new Date(availability.startTime))}
+          </span>
         )}
-      >
-        <Button
-          impact={isSelected ? "none" : "light"}
-          disabled={isSelected}
-          className={cx(
-            "w-full focus:ring-inset focus:ring-offset-0 active:translate-y-0",
-            isSelected && "text-white disabled:opacity-100"
+
+        {mode === "all_classes" && (
+          <span
+            className="max-w-[25%] text-right overflow-hidden text-ellipsis whitespace-nowrap text-sm text-gray-500"
+            title={availability.managerId}
+          >
+            {availability.managerId || "N/A"}
+          </span>
+        )}
+      </div>
+
+      {mode === "class" || mode === "all_classes" ? (
+        <div className="mt-1 flex w-full justify-between text-sm">
+          <span
+            className={cx("overflow-hidden text-ellipsis whitespace-nowrap", seatColor)}
+            title={`${availableSeats} seats available`}
+            style={{ maxWidth: "50%" }}
+          >
+            {availableSeats} seats available
+          </span>
+          {mode === "all_classes" && (
+            <span
+              className="text-gray-500 overflow-hidden text-ellipsis whitespace-nowrap text-sm"
+              style={{ maxWidth: "50%" }}
+              title={availability.managerId}
+            >
+              {availability.managerId || "N/A"}
+            </span>
           )}
-          onClick={() => setSelectedTime(availability.startTime)}
-        >
-          {timeFormatter.format(new Date(availability.startTime))}
-        </Button>
-      </div>
-      <div className="m-2 basis-1/2">
-        <Button
-          size="small"
-          impact="light"
-          tabIndex={isSelected ? 0 : -1}
-          className="w-full focus-visible:ring-inset focus-visible:ring-offset-0"
-          onClick={() =>
-            router.push(`/booking/booking-details?time=${availability.startTime}`)
-          }
-        >
-          Confirm
-        </Button>
-      </div>
+        </div>
+      ) : null}
+
+      {isSelected && (
+        <div className="mt-3 flex w-full justify-between">
+          <button
+            className="w-full rounded bg-primary-500 px-4 py-2 text-white hover:bg-primary-600"
+            onClick={() =>
+              router.push(
+                `/booking/booking-details?time=${availability.startTime}`
+              )
+            }
+          >
+            Confirm
+          </button>
+        </div>
+      )}
     </li>
   );
 }

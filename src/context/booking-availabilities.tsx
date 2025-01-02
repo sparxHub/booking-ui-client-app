@@ -1,9 +1,9 @@
-// context/booking-availabilities.tsx
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { getBookings } from "@/services/bookingService";
 import { Booking } from "@/domain/bookings";
+import { BookingType } from "@/domain/bookingTypes";
 
 const BookingAvailabilitiesContext = createContext<{
   bookings: Booking[];
@@ -15,7 +15,13 @@ const BookingAvailabilitiesContext = createContext<{
   error: null,
 });
 
-export function BookingAvailabilitiesProvider({ children }) {
+export function BookingAvailabilitiesProvider({
+  children,
+  selectedBookingType,
+}: {
+  children: React.ReactNode;
+  selectedBookingType: BookingType | null;
+}) {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,11 +32,18 @@ export function BookingAvailabilitiesProvider({ children }) {
         setLoading(true);
         const businessId = "7dde79e9-cbe8-4a48-ae71-35a111937af1";
 
-        // Fetch bookings via bookingService
+        // Determine whether to filter by typeId (only for personal sessions)
+        const typeId =
+          selectedBookingType?.sessionType === "personalSession"
+            ? selectedBookingType.typeId
+            : undefined;
+
+        // Fetch bookings
         const bookings = await getBookings(
           businessId,
           new Date().toISOString(),
-          new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // Next 30 days
+          new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Next 30 days
+          typeId // Pass typeId only for personal sessions
         );
 
         setBookings(bookings);
@@ -44,7 +57,7 @@ export function BookingAvailabilitiesProvider({ children }) {
     };
 
     fetchBookings();
-  }, []);
+  }, [selectedBookingType]); // Re-fetch bookings when `selectedBookingType` changes
 
   return (
     <BookingAvailabilitiesContext.Provider value={{ bookings, loading, error }}>

@@ -1,3 +1,5 @@
+'use client';
+
 import { useSelectedDate } from "@/context/selected-date"
 
 export function BackgroundDecoration() {
