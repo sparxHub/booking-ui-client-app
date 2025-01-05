@@ -1,14 +1,14 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
-import { ClockIcon, UserIcon } from "@heroicons/react/24/outline";
+import { ClockIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import cx from "classnames";
 
 import heroImage from "@/../public/img/social-large.jpg";
 import { useBookingTypes } from "@/context/booking-types";
 import { useManagers } from "@/context/managers";
+import { useTheme } from '@/context/theme';
 
 const isExport = process.env.NEXT_PUBLIC_EXPORT_MODE === "true";
 
@@ -65,13 +65,16 @@ export function BookingSidePanel() {
         <p className="mt-1 text-sm font-semibold uppercase tracking-wider text-primary-600">
           {selectedBookingType.details || "Class description not available"}
         </p>
-        <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
-          <ClockIcon className="h-5 w-5 text-primary-600" />
-          <span>{`${selectedBookingType.duration} minutes`}</span>
+        <div className="mt-4 flex flex-col gap-2 rounded-lg border border-primary-200 p-4">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <ClockIcon className="h-5 w-5 text-primary-600" />
+            <span>{`${selectedBookingType.duration} minutes`}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <UserGroupIcon className="h-5 w-5 text-primary-600" />
+            <span>Max Participants: {selectedBookingType.maxBookings || "N/A"}</span>
+          </div>
         </div>
-        <p className="mt-4 text-sm text-gray-600">
-          Max Participants: {selectedBookingType.maxBookings || "N/A"}
-        </p>
       </div>
     );
   } else if (mode === "personal" && selectedBookingType) {
@@ -84,13 +87,20 @@ export function BookingSidePanel() {
         <p className="mt-1 text-sm font-semibold uppercase tracking-wider text-primary-600">
           {selectedBookingType.details || "Details not available"}
         </p>
-        <div className="mt-4 flex items-center gap-2 text-sm text-gray-600">
-          <UserIcon className="h-5 w-5 text-primary-600" />
-          <span>
-            {instructor
-              ? `${instructor.firstName} ${instructor.lastName}`
-              : "Instructor: N/A"}
-          </span>
+        <div className="mt-4 flex flex-col gap-2 rounded-lg border border-primary-200 p-4">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <ClockIcon className="h-5 w-5 text-primary-600" />
+            <span>{`${selectedBookingType.duration} minutes`}</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <UserGroupIcon className="h-5 w-5 text-primary-600" />
+            <span>
+              Instructor:{" "}
+              {instructor
+                ? `${instructor.firstName} ${instructor.lastName}`
+                : "N/A"}
+            </span>
+          </div>
         </div>
       </div>
     );
@@ -146,36 +156,72 @@ export function BookingSidePanel() {
             <>
               {panelContent}
 
-              {/* Avatar Picker */}
-              <div className="mb-6 flex gap-4 overflow-x-auto">
-                {instructors.map((instructor) => (
-                  <button
-                    key={instructor.managerId || "all"}
-                    onClick={() =>
-                      setSelectedInstructor(instructor.managerId || null)
-                    }
-                    className={cx(
-                      "flex flex-col items-center text-center",
-                      selectedInstructor === instructor.managerId
-                        ? "text-primary-800"
-                        : "text-gray-600"
-                    )}
-                  >
-                    <Avatar
-                      name={`${instructor.firstName} ${instructor.lastName}`}
-                      photo={instructor.photo}
-                    />
-                    <span className="mt-2 text-sm font-medium">
-                      {`${instructor.firstName} ${instructor.lastName}`}
-                    </span>
-                  </button>
-                ))}
-              </div>
+              <AvatarPicker
+                title="Filter by Instructor"
+                instructors={instructors}
+                selectedInstructor={selectedInstructor}
+                onSelect={(id) => setSelectedInstructor(id)}
+              />
             </>
           )}
         </div>
       </div>
     </aside>
+  );
+}
+
+// ------------------------------
+// AvatarPicker Component
+// ------------------------------
+function AvatarPicker({
+  instructors,
+  selectedInstructor,
+  onSelect,
+  title,
+}: {
+  instructors: { managerId: string | null; firstName: string; lastName: string; photo?: string }[];
+  selectedInstructor: string | null;
+  onSelect: (id: string | null) => void;
+  title: string;
+}) {
+
+  return (
+    <div>
+      {/* Title */}
+      <h3
+        className="mb-4 text-lg font-semibold"
+      >
+        {title}
+      </h3>
+
+      {/* Avatar Picker Grid */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {instructors.map((instructor) => (
+          <button
+            key={instructor.managerId || "all"}
+            onClick={() => onSelect(instructor.managerId || null)}
+            className={cx(
+              "flex flex-col items-center text-center p-2 rounded-md border transition",
+              selectedInstructor === instructor.managerId
+                ? "bg-primary-100 border-primary-500"
+                : "hover:bg-gray-100 border-transparent"
+            )}
+          >
+            {/* Avatar */}
+            <Avatar
+              name={`${instructor.firstName} ${instructor.lastName}`}
+              photo={instructor.photo}
+            />
+
+            {/* Name */}
+            <div className="mt-2 text-sm font-medium max-w-[100px]">
+              <p className="truncate">{instructor.firstName}</p>
+              <p className="truncate">{instructor.lastName}</p>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 
