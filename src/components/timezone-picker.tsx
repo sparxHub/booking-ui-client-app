@@ -33,21 +33,21 @@ export function TimezonePicker() {
             .includes(query.toLowerCase().replace(/\s+/g, "")),
         )
 
-  // ------------------------------
-  // Get a list of world timezones (clientside fetch)
-  // ------------------------------
-  async function getTimezones() {
-    try {
-      const response = await fetch("https://worldtimeapi.org/api/timezone")
-      const json = await response.json()
-      setTimezones(json)
-    } catch (error) {
-      console.error("Unable to fetch timezones! ", error)
-    }
-  }
-  useEffect(() => {
-    getTimezones()
-  }, [])
+  // // ------------------------------
+  // // Get a list of world timezones (clientside fetch)
+  // // ------------------------------
+  // async function getTimezones() {
+  //   try {
+  //     const response = await fetch("https://worldtimeapi.org/api/timezone")
+  //     const json = await response.json()
+  //     setTimezones(json)
+  //   } catch (error) {
+  //     console.error("Unable to fetch timezones! ", error)
+  //   }
+  // }
+  // useEffect(() => {
+  //   getTimezones()
+  // }, [])
 
   // ------------------------------
   // To avoid server/client hydration mismatch, we need to re-establish

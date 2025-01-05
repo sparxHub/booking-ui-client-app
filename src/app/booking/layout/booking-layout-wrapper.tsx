@@ -1,19 +1,20 @@
-"use client";
+'use client';
 
-import { Open_Sans } from "next/font/google";
-import { I18nProvider, useLocale } from "react-aria";
+import { Open_Sans } from 'next/font/google';
+import { I18nProvider, useLocale } from 'react-aria';
 
-import { ThemeProvider, useTheme } from "@/context/theme";
-import { SelectedDateProvider } from "@/context/selected-date";
-import { BookingAvailabilitiesProvider } from "@/context/booking-availabilities";
+import { ThemeProvider, useTheme } from '@/context/theme';
+import { SelectedDateProvider } from '@/context/selected-date';
+import { BookingAvailabilitiesProvider } from '@/context/booking-availabilities';
 
-import { BookingShell } from "@/app/booking/layout/booking-shell";
-import { BookingTypesProvider, useBookingTypes } from "@/context/booking-types";
+import { BookingShell } from '@/app/booking/layout/booking-shell';
+import { BookingTypesProvider, useBookingTypes } from '@/context/booking-types';
+import { ManagersProvider } from '@/context/managers';
 
 const openSans = Open_Sans({
-  display: "swap",
-  weight: ["400", "600", "700", "800"],
-  subsets: ["latin"],
+  display: 'swap',
+  weight: ['400', '600', '700', '800'],
+  subsets: ['latin'],
 });
 
 export default function RootLayout({
@@ -33,7 +34,9 @@ function Body({ children }) {
   return (
     <SelectedDateProvider>
       <BookingTypesProvider>
-        <NestedProviders>{children}</NestedProviders>
+        <ManagersProvider>
+          <NestedProviders>{children}</NestedProviders>
+        </ManagersProvider>
       </BookingTypesProvider>
     </SelectedDateProvider>
   );

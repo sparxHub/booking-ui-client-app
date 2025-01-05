@@ -6,6 +6,7 @@ const nextConfig = (phase, { defaultConfig }) => {
     reactStrictMode: false,
     output: isExport ? "export" : "standalone",
     images: {
+      domains: ['lh3.googleusercontent.com', 'i.pravatar.cc'],
       loader: isExport ? "custom" : "default", // Use custom loader for export
       path: isExport ? "/" : undefined,  // Use default path in dynamic mode
       unoptimized: isExport, // Disable optimization for export

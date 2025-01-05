@@ -23,41 +23,49 @@ export function BookingAvailabilitiesProvider({
   selectedBookingType: BookingType | null;
 }) {
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        setLoading(true);
-        const businessId = "7dde79e9-cbe8-4a48-ae71-35a111937af1";
+    // Only fetch bookings when `selectedBookingType` is defined
+    if (selectedBookingType) {
+      const fetchBookings = async () => {
+        try {
+          setLoading(true);
+          const businessId = "7dde79e9-cbe8-4a48-ae71-35a111937af1";
 
-        // Determine whether to filter by typeId (only for personal sessions)
-        const typeId =
-          selectedBookingType?.sessionType === "personalSession"
-            ? selectedBookingType.typeId
-            : undefined;
+          // Determine whether to filter by typeId (only for personal sessions)
+          const typeId =
+            selectedBookingType.sessionType === "personalSession"
+              ? selectedBookingType.typeId
+              : undefined;
 
-        // Fetch bookings
-        const bookings = await getBookings(
-          businessId,
-          new Date().toISOString(),
-          new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Next 30 days
-          typeId // Pass typeId only for personal sessions
-        );
+          // Fetch bookings
+          const bookings = await getBookings(
+            businessId,
+            new Date().toISOString(),
+            new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Next 30 days
+            typeId // Pass typeId only for personal sessions
+          );
 
-        setBookings(bookings);
-      } catch (err) {
-        console.error("Error fetching bookings:", err);
-        setError("Failed to fetch bookings. Using fallback data.");
-        setBookings([]); // Fallback empty bookings
-      } finally {
-        setLoading(false);
-      }
-    };
+          setBookings(bookings);
+        } catch (err) {
+          console.error("Error fetching bookings:", err);
+          setError("Failed to fetch bookings. Using fallback data.");
+          setBookings([]); // Fallback empty bookings
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchBookings();
-  }, [selectedBookingType]); // Re-fetch bookings when `selectedBookingType` changes
+      fetchBookings();
+    } else {
+      // Reset state when there is no `selectedBookingType`
+      setBookings([]);
+      setError(null);
+      setLoading(false);
+    }
+  }, [selectedBookingType]);
 
   return (
     <BookingAvailabilitiesContext.Provider value={{ bookings, loading, error }}>
