@@ -2,43 +2,44 @@
 
 import Image from "next/image";
 import { ClockIcon, UserGroupIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
-import cx from "classnames";
-
-import heroImage from "@/../public/img/social-large.jpg";
 import { useBookingTypes } from "@/context/booking-types";
 import { useManagers } from "@/context/managers";
-import { useTheme } from '@/context/theme';
+import { AvatarPicker } from "@/components/AvatarPicker"; // Separated component
+import { useSelectedInstructor } from "@/context/selected-instructor";
 
-const isExport = process.env.NEXT_PUBLIC_EXPORT_MODE === "true";
-
-const customLoader = ({ src, width, quality }) => {
-  return `${src}?w=${width}&q=${quality || 75}`;
-};
-
-const imageSrc = heroImage?.src || "/img/social-large.jpg";
+const heroImage = "/img/social-large.jpg";
 
 export function BookingSidePanel() {
   const { selectedBookingType, mode, loading: bookingTypesLoading } = useBookingTypes();
   const { managers } = useManagers();
-  const [selectedInstructor, setSelectedInstructor] = useState<string | null>(
-    null
-  );
+  const { selectedInstructor, setSelectedInstructor } = useSelectedInstructor();
+
+  // Initialize instructors array
+  let instructors: { 
+    managerId: string | null; 
+    firstName: string; 
+    lastName: string; 
+    photo?: string 
+  }[] = [];
 
   // Fetch instructors based on the mode
-  let instructors: { managerId: string | null; firstName: string; lastName: string; photo?: string }[] = [];
   if ((mode === "class" || mode === "personal") && selectedBookingType) {
     instructors = selectedBookingType.availabilities
       .map((availability) => availability.managerId)
-      .filter((id, index, self) => id !== undefined && self.indexOf(id) === index) // Ensure no undefined values
+      .filter((id, index, self) => id !== undefined && self.indexOf(id) === index)
       .map((managerId) => {
         const manager = managers.find((manager) => manager.managerId === managerId);
         return manager
-          ? { managerId: manager.managerId, firstName: manager.firstName, lastName: manager.lastName, photo: manager.photo }
+          ? {
+              managerId: manager.managerId,
+              firstName: manager.firstName,
+              lastName: manager.lastName,
+              photo: manager.photo,
+            }
           : { managerId: managerId || null, firstName: "Unknown", lastName: "" };
       });
   } else if (mode === "all_classes") {
-    const allManagers = managers
+    instructors = managers
       .filter((manager) => manager.roles.includes("instructor"))
       .map((manager) => ({
         managerId: manager.managerId,
@@ -46,11 +47,18 @@ export function BookingSidePanel() {
         lastName: manager.lastName,
         photo: manager.photo,
       }));
-    instructors = [...new Set(allManagers)];
+
+    // Remove duplicates
+    instructors = [...new Map(instructors.map((inst) => [inst.managerId, inst])).values()];
   }
 
+  // Add "All Instructors" option if applicable
   if (instructors.length > 1) {
-    instructors.unshift({ managerId: null, firstName: "All", lastName: "Instructors" });
+    instructors.unshift({
+      managerId: null,
+      firstName: "All",
+      lastName: "Instructors",
+    });
   }
 
   // Determine panel content
@@ -78,7 +86,7 @@ export function BookingSidePanel() {
       </div>
     );
   } else if (mode === "personal" && selectedBookingType) {
-    const instructor = instructors[0];
+    const instructor = instructors.find((inst) => inst.managerId === selectedInstructor);
     panelContent = (
       <div className="min-[400px]:text-center md:text-left">
         <h2 className="text-3xl font-extrabold lg:text-2xl xl:text-3xl">
@@ -167,91 +175,5 @@ export function BookingSidePanel() {
         </div>
       </div>
     </aside>
-  );
-}
-
-function AvatarPicker({
-  instructors,
-  selectedInstructor,
-  onSelect,
-  title,
-}: {
-  instructors: { managerId: string | null; firstName: string; lastName: string; photo?: string }[];
-  selectedInstructor: string | null;
-  onSelect: (id: string | null) => void;
-  title: string;
-}) {
-  return (
-    <div className="flex flex-col">
-      {/* Title */}
-      <h3 className="mb-4 text-lg font-semibold text-primary-600">{title}</h3>
-
-      {/* Scrollable Container */}
-      <div className="max-h-[300px] overflow-y-auto border border-primary-200 rounded-lg p-4">
-        <div className="grid grid-cols-3 gap-4">
-          {instructors.map((instructor) => (
-            <button
-              key={instructor.managerId || "all"}
-              onClick={() => onSelect(instructor.managerId || null)}
-              className={cx(
-                "flex flex-col items-center text-center p-2 rounded-md border transition",
-                selectedInstructor === instructor.managerId
-                  ? "bg-primary-100 border-primary-500"
-                  : "hover:bg-gray-100 border-transparent"
-              )}
-            >
-              {/* Avatar */}
-              <Avatar
-                name={`${instructor.firstName} ${instructor.lastName}`}
-                photo={instructor.photo}
-              />
-
-              {/* Name */}
-              <div className="mt-2 text-sm font-medium max-w-[80px]">
-                <p className="truncate">{instructor.firstName}</p>
-                <p className="truncate">{instructor.lastName}</p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ------------------------------
-// Avatar Component
-// ------------------------------
-function Avatar({
-  name,
-  photo,
-}: {
-  name: string;
-  photo?: string;
-}) {
-  if (photo) {
-    return (
-      <div className="h-12 w-12 overflow-hidden rounded-full bg-gray-300">
-        <Image
-          src={photo}
-          alt={name}
-          width={48}
-          height={48}
-          className="object-cover"
-        />
-      </div>
-    );
-  }
-
-  const initials = name
-    .split(" ")
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase();
-
-  return (
-    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-500 text-white">
-      {initials}
-    </div>
   );
 }
