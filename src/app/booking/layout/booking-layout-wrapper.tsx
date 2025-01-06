@@ -10,6 +10,7 @@ import { BookingAvailabilitiesProvider } from '@/context/booking-availabilities'
 import { BookingShell } from '@/app/booking/layout/booking-shell';
 import { BookingTypesProvider, useBookingTypes } from '@/context/booking-types';
 import { ManagersProvider } from '@/context/managers';
+import { SelectedInstructorProvider } from '@/context/selected-instructor';
 
 const openSans = Open_Sans({
   display: 'swap',
@@ -33,11 +34,13 @@ function Body({ children }) {
 
   return (
     <SelectedDateProvider>
-      <BookingTypesProvider>
-        <ManagersProvider>
-          <NestedProviders>{children}</NestedProviders>
-        </ManagersProvider>
-      </BookingTypesProvider>
+      <SelectedInstructorProvider>
+        <BookingTypesProvider>
+          <ManagersProvider>
+            <NestedProviders>{children}</NestedProviders>
+          </ManagersProvider>
+        </BookingTypesProvider>
+      </SelectedInstructorProvider>
     </SelectedDateProvider>
   );
 }

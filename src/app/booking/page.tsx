@@ -5,31 +5,33 @@ import { Calendar } from "../../components/calendar";
 import { TimePicker } from "../../components/time-picker";
 import { TimezonePicker } from "../../components/timezone-picker";
 import { useBookingAvailabilities } from "@/context/booking-availabilities";
+import { useSelectedInstructor } from "@/context/selected-instructor";
 
 export default function BookingPage() {
   const {
-    bookingTypes,
     selectedBookingType,
     mode,
     loading: loadingBookingTypes,
     error: errorBookingTypes,
   } = useBookingTypes();
   const { bookings } = useBookingAvailabilities();
+  const { selectedInstructor } = useSelectedInstructor();
 
-  // Filter bookings based on mode and selectedBookingType
+  // Filter bookings based on mode, selectedBookingType, and selectedInstructor
   const filteredBookings = bookings.filter((booking) => {
-    if (mode === "personal") {
-      return (
-        booking.typeId === selectedBookingType?.typeId &&
-        booking.sessionType === "personalSession"
-      );
-    } else if (mode === "class") {
-      return (
-        booking.typeId === selectedBookingType?.typeId &&
-        booking.sessionType === "classSession"
-      );
-    }
-    return true; // Show all bookings for "all_classes"
+    const matchesMode =
+      (mode === "personal" && booking.sessionType === "personalSession") ||
+      (mode === "class" && booking.sessionType === "classSession") ||
+      mode === "all_classes";
+
+    const matchesType =
+      !selectedBookingType || booking.typeId === selectedBookingType.typeId;
+
+    const matchesInstructor =
+      selectedInstructor === null || // No instructor filtering if "All" is selected
+      booking.managerId === selectedInstructor;
+
+    return matchesMode && matchesType && matchesInstructor;
   });
 
   if (loadingBookingTypes) {
@@ -70,7 +72,7 @@ export default function BookingPage() {
           </div>
         </div>
         <div className="min-h-0">
-          <TimePicker bookings={filteredBookings} mode={mode}/>
+          <TimePicker bookings={filteredBookings} mode={mode} />
         </div>
       </div>
     </div>
