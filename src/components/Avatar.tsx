@@ -2,6 +2,12 @@
 
 import Image from "next/image";
 
+const isExport = process.env.NEXT_PUBLIC_EXPORT_MODE === "true";
+
+const customLoader = ({ src, width, quality }: { src: string; width: number; quality?: number }) => {
+  return `${src}?w=${width}&q=${quality || 75}`;
+};
+
 export function Avatar({ name, photo }: { name: string; photo?: string }) {
   if (photo) {
     return (
@@ -11,6 +17,7 @@ export function Avatar({ name, photo }: { name: string; photo?: string }) {
           alt={name}
           width={48}
           height={48}
+          loader={isExport ? customLoader : undefined} // Add custom loader
           className="object-cover"
         />
       </div>
