@@ -43,7 +43,7 @@ function Body({ children }) {
     <body className="antialiased" data-theme={theme}>
       <div className="grid min-h-screen md:place-items-center">
         <BackgroundDecoration />
-        <div className="mx-auto w-full max-w-5xl px-2 py-8 md:py-16 sm:px-6 lg:max-w-7xl lg:px-3 xl:px-8">
+        <div className="mx-auto w-full max-w-5xl sm:px-0 sm:py-0 md:py-16 md:px-6 lg:max-w-7xl lg:px-3 xl:px-8">
           <div className="relative">{children}</div>
         </div>
       </div>

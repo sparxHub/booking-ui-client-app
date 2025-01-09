@@ -1,3 +1,5 @@
+// booking-shell.tsx
+
 import { Metadata } from "next"
 
 import { BookingSidePanel } from "./booking-side-panel"
@@ -52,15 +54,16 @@ export const metadata: Metadata = {
 export function BookingShell({ children }) {
   return (
     <div className="grid min-h-screen place-items-center">
-      <div className="mx-auto w-full max-w-5xl px-2 py-16 sm:px-6 lg:max-w-7xl lg:px-3 xl:px-8">
+      <div className="mx-auto w-full max-w-5xl sm:px-6 sm:py-16 lg:max-w-7xl lg:px-3 xl:px-8">
         <div className="relative">
           {/* <Ribbon /> */}
-          <div className="grid h-full rounded-2xl shadow-lg lg:grid-cols-[theme(width.80),1fr] xl:grid-cols-[theme(width.96),1fr]">
+          <div className="grid h-full shadow-lg lg:grid-cols-[theme(width.80),1fr] xl:grid-cols-[theme(width.96),1fr]">
             <BookingSidePanel />
             <BookingMainPanel>{children}</BookingMainPanel>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
+
