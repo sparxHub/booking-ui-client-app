@@ -4,11 +4,6 @@ import { Open_Sans } from 'next/font/google';
 import { I18nProvider, useLocale } from 'react-aria';
 
 import { ThemeProvider, useTheme } from '@/context/theme';
-import { SelectedDateProvider } from '@/context/selected-date';
-import { BookingAvailabilitiesProvider } from '@/context/booking-availabilities';
-
-import { BookingShell } from '@/app/booking/layout/booking-shell';
-// import { ThemeSwitcher } from "./theme-switcher"
 import { NavBar } from '@/components/navbar';
 import { BackgroundDecoration } from '@/components/background-decoration';
 
