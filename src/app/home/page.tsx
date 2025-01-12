@@ -58,7 +58,7 @@ export default function HomePage() {
   });
 
   return (
-    <div className="relative mx-auto max-w-3xl p-0 sm:p-4 xl:p-10">
+    <div className="relative mx-auto max-w-3xl pt-8 p-0 sm:p-4 xl:p-10">
       {/* Centered Content */}
       <div className="text-center">
         {/* Avatar Image */}

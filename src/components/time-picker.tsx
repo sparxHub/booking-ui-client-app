@@ -38,48 +38,54 @@ export function TimePicker({
       </div>
 
       <div className="-mx-4 mt-4 overflow-y-auto px-4">
-  <div className="relative">
-    {hasAvailability ? (
-      <ul className="space-y-2 pt-2 sm:pb-8 md:pb-40">
-        {availabilities.map((availability) => (
-          <TimeSlot
-            key={availability.startTime}
-            availability={availability}
-            mode={mode}
-            selectedTime={selectedTime}
-            setSelectedTime={setSelectedTime}
-          />
-        ))}
-      </ul>
-    ) : (
-      <div className="relative">
-        {/* Add blur effect here */}
-        <ul
-          className="space-y-2 py-2 blur-sm"
-          style={{
-            backdropFilter: "blur(4px)", // Apply blur effect
-            WebkitBackdropFilter: "blur(4px)", // Safari compatibility
-          }}
-          aria-hidden="true"
-        >
-          {["8:00 AM", "9:00 AM", "2:00 PM", "4:00 PM"].map((time) => (
-            <li
-              key={time}
-              className="rounded-lg bg-primary-100 px-5 py-3 text-center font-semibold text-primary-700 opacity-40
-              [@supports_not_(backdrop-filter:blur(0))]:line-through [@supports_not_(backdrop-filter:blur(0))]:opacity-20"
-            >
-              {time}
-            </li>
-          ))}
-        </ul>
-        {/* Fallback text */}
-        <p className="mt-2 pb-4 text-center text-sm text-slate-500 sm:pb-8">
-          No booking availabilities on this day.
-        </p>
+        <div className="relative">
+          {hasAvailability ? (
+            <div className="relative">
+              <ul className="space-y-2 pt-2 sm:pb-8 md:pb-40">
+                {availabilities.map((availability) => (
+                  <TimeSlot
+                    key={availability.startTime}
+                    availability={availability}
+                    mode={mode}
+                    selectedTime={selectedTime}
+                    setSelectedTime={setSelectedTime}
+                  />
+                ))}
+              </ul>
+              {/* Informational Text */}
+              <p className="mt-2 pb-4 text-center text-sm text-slate-500 sm:pb-8">
+                Pick one of the slots above to proceed.
+              </p>
+            </div>
+          ) : (
+            <div className="relative">
+              {/* Add blur effect here */}
+              <ul
+                className="space-y-2 py-2 blur-sm"
+                style={{
+                  backdropFilter: "blur(4px)", // Apply blur effect
+                  WebkitBackdropFilter: "blur(4px)", // Safari compatibility
+                }}
+                aria-hidden="true"
+              >
+                {["8:00 AM", "9:00 AM", "2:00 PM", "4:00 PM"].map((time) => (
+                  <li
+                    key={time}
+                    className="rounded-lg bg-primary-100 px-5 py-3 text-center font-semibold text-primary-700 opacity-40
+                    [@supports_not_(backdrop-filter:blur(0))]:line-through [@supports_not_(backdrop-filter:blur(0))]:opacity-20"
+                  >
+                    {time}
+                  </li>
+                ))}
+              </ul>
+              {/* Fallback Text */}
+              <p className="mt-2 pb-4 text-center text-sm text-slate-500 sm:pb-8">
+                No booking availabilities on this day.
+              </p>
+            </div>
+          )}
+        </div>
       </div>
-    )}
-  </div>
-</div>
     </div>
   );
 }
@@ -120,7 +126,11 @@ function TimeSlot({
         "relative flex flex-col items-center justify-between rounded-lg border px-4 py-3 transition-all cursor-pointer",
         isSelected ? "bg-primary-600 text-white" : "bg-white"
       )}
-      onClick={() => setSelectedTime(availability.startTime)}
+      onClick={() =>
+        isSelected
+          ? setSelectedTime(null) // Deselect if already selected
+          : setSelectedTime(availability.startTime) // Select if not selected
+      }
     >
       <div className="flex w-full justify-between items-center">
         {mode === "all_classes" ? (
@@ -178,6 +188,15 @@ function TimeSlot({
             }
           >
             Confirm
+          </button>
+          <button
+            className="ml-2 w-full rounded border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-100"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent re-selecting the same item
+              setSelectedTime(null); // Clear selection
+            }}
+          >
+            Cancel
           </button>
         </div>
       )}
