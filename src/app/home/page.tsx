@@ -67,7 +67,7 @@ export default function HomePage() {
       {/* Centered Content */}
       <div className="text-center">
         {/* Avatar Image */}
-        <div className="relative mx-auto mb-6 h-32 w-32 overflow-hidden rounded-full border-4 border-primary-900 shadow-md">
+        <div className="relative mx-auto mb-6 h-32 w-32 overflow-hidden rounded-full border-4 border-primary-800 shadow-md">
           <Image
             src={imageSrc}
             loader={isExport ? customLoader : undefined}
