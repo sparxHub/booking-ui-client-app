@@ -4,7 +4,7 @@ import Image from "next/image";
 import { ClockIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import { useBookingTypes } from "@/context/booking-types";
 import { useManagers } from "@/context/managers";
-import { AvatarPicker } from "@/components/AvatarPicker"; // Separated component
+import { AvatarPicker } from "@/components/AvatarPicker";
 import { useSelectedInstructor } from "@/context/selected-instructor";
 
 const heroImage = "/img/social-large.jpg";
@@ -14,7 +14,6 @@ export function BookingSidePanel() {
   const { managers } = useManagers();
   const { selectedInstructor, setSelectedInstructor } = useSelectedInstructor();
 
-  // Initialize instructors array
   let instructors: { 
     managerId: string | null; 
     firstName: string; 
@@ -22,7 +21,6 @@ export function BookingSidePanel() {
     photo?: string 
   }[] = [];
 
-  // Fetch instructors based on the mode
   if ((mode === "class" || mode === "personal") && selectedBookingType) {
     instructors = selectedBookingType.availabilities
       .map((availability) => availability.managerId)
@@ -48,11 +46,9 @@ export function BookingSidePanel() {
         photo: manager.photo,
       }));
 
-    // Remove duplicates
     instructors = [...new Map(instructors.map((inst) => [inst.managerId, inst])).values()];
   }
 
-  // Add "All Instructors" option if applicable
   if (instructors.length > 1) {
     instructors.unshift({
       managerId: null,
@@ -61,19 +57,18 @@ export function BookingSidePanel() {
     });
   }
 
-  // Determine panel content
   let panelContent;
 
   if (mode === "class" && selectedBookingType) {
     panelContent = (
-      <div className="min-[400px]:text-center md:text-left">
+      <div className="text-center md:text-left">
         <h2 className="text-3xl font-extrabold lg:text-2xl xl:text-3xl">
           {selectedBookingType.title}
         </h2>
         <p className="mt-1 text-sm font-semibold uppercase tracking-wider text-primary-600">
           {selectedBookingType.details || "Class description not available"}
         </p>
-        <div className="mt-4 flex flex-col gap-2 rounded-lg border border-primary-200 p-4">
+        <div className="mt-4 flex flex-col gap-2 border border-primary-200 p-4">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <ClockIcon className="h-5 w-5 text-primary-600" />
             <span>{`${selectedBookingType.duration} minutes`}</span>
@@ -88,14 +83,14 @@ export function BookingSidePanel() {
   } else if (mode === "personal" && selectedBookingType) {
     const instructor = instructors.find((inst) => inst.managerId === selectedInstructor);
     panelContent = (
-      <div className="min-[400px]:text-center md:text-left">
+      <div className="text-center md:text-left">
         <h2 className="text-3xl font-extrabold lg:text-2xl xl:text-3xl">
           {selectedBookingType.title}
         </h2>
         <p className="mt-1 text-sm font-semibold uppercase tracking-wider text-primary-600">
           {selectedBookingType.details || "Details not available"}
         </p>
-        <div className="mt-4 flex flex-col gap-2 rounded-lg border border-primary-200 p-4">
+        <div className="mt-4 flex flex-col gap-2 border border-primary-200 p-4">
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <ClockIcon className="h-5 w-5 text-primary-600" />
             <span>{`${selectedBookingType.duration} minutes`}</span>
@@ -114,7 +109,7 @@ export function BookingSidePanel() {
     );
   } else if (mode === "all_classes") {
     panelContent = (
-      <div className="min-[400px]:text-center md:text-left">
+      <div className="text-center md:text-left">
         <h2 className="text-3xl font-extrabold lg:text-2xl xl:text-3xl">
           Explore Classes
         </h2>
@@ -133,9 +128,9 @@ export function BookingSidePanel() {
   }
 
   return (
-    <aside className="rounded-t-2xl border-8 border-b-0 border-white bg-white bg-opacity-90 backdrop-blur-md lg:rounded-l-2xl lg:rounded-tr-none lg:border-b-8 lg:border-r-0 lg:pr-4 [@supports(backdrop-filter:blur(0))]:bg-opacity-80">
-      <div className="-mt-16 px-4 py-8 sm:px-8 md:mt-0 lg:-mt-16 lg:px-6 xl:px-8">
-        <div className="flex flex-col items-start gap-8 pt-10 min-[400px]:items-center md:flex-row lg:flex-col lg:items-start">
+    <aside className="border-8 border-b-0 border-white bg-white bg-opacity-90 backdrop-blur-md lg:rounded-l-2xl lg:rounded-tr-none lg:border-b-8 lg:border-r-0 lg:pr-4 sm:rounded-none">
+      <div className="-mt-16 px-4 py-8 md:mt-0 lg:-mt-16 lg:px-6 xl:px-8">
+        <div className="flex flex-col gap-8 pt-10">
           {bookingTypesLoading ? (
             <div className="flex h-full w-full items-center justify-center">
               <svg
