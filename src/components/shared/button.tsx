@@ -28,11 +28,11 @@ const impactClasses: Record<
   Record<NonNullable<ButtonProps["impact"]>, string>
 > = {
   default: {
-    bold: "bg-primary-800 text-white shadow-md hover:bg-primary-800 focus-visible:ring-primary-700",
+    bold: "bg-primary-900 text-primary-100 shadow-md hover:bg-primary-700 focus-visible:ring-primary-500",
     light:
       "bg-primary-100 text-primary-700 hover:bg-primary-200 focus-visible:ring-primary-500",
     outline:
-      "border border-primary-800 text-primary-800 hover:bg-primary-400 focus-visible:ring-primary-800",
+      "border border-primary-900 text-primary-900 hover:bg-primary-400 focus-visible:ring-primary-800",
     none: "bg-transparent text-primary-800 hover:bg-primary-400 focus-visible:ring-primary-700",
   },
   danger: {

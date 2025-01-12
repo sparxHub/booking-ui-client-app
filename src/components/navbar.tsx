@@ -12,7 +12,7 @@ export function NavBar() {
   const [showMenu, setShowMenu] = useState(false); // Dropdown menu state
 
   return (
-    <div className="flex flex-wrap items-center justify-between border-b border-primary-700 py-2">
+    <div className="flex flex-wrap items-center justify-between border-b border-primary-800 py-2">
       {/* Left Section: Login & Join Buttons */}
       <div className="flex items-center gap-2">
         {isLoggedIn ? (
@@ -71,26 +71,26 @@ export function NavBar() {
       {/* Social Icons: Shown only on Medium and Larger Screens */}
       <div className="hidden sm:flex items-center gap-2">
         <Button size="small" shape="square" impact="none">
-          <TwitterIcon className="h-5 w-5 text-primary-800" />
+          <TwitterIcon className="h-5 w-5 text-primary-900" />
         </Button>
         <Button size="small" shape="square" impact="none">
-          <FacebookIcon className="h-5 w-5 text-primary-800" />
+          <FacebookIcon className="h-5 w-5 text-primary-900" />
         </Button>
         <Button size="small" shape="square" impact="none">
-          <InstagramIcon className="h-5 w-5 text-primary-800" />
+          <InstagramIcon className="h-5 w-5 text-primary-900" />
         </Button>
       </div>
 
       {/* Social Icons: Shown only on Small Screens */}
       <div className="flex sm:hidden mt-2 w-full justify-left gap-2">
         <Button size="small" shape="square" impact="none">
-          <TwitterIcon className="h-5 w-5 text-primary-800" />
+          <TwitterIcon className="h-5 w-5 text-primary-900" />
         </Button>
         <Button size="small" shape="square" impact="none">
-          <FacebookIcon className="h-5 w-5 text-primary-800" />
+          <FacebookIcon className="h-5 w-5 text-primary-900" />
         </Button>
         <Button size="small" shape="square" impact="none">
-          <InstagramIcon className="h-5 w-5 text-primary-800" />
+          <InstagramIcon className="h-5 w-5 text-primary-900" />
         </Button>
       </div>
     </div>

@@ -6,8 +6,12 @@ import { useBookingTypes } from '@/context/booking-types';
 import { ServiceSteps } from '@/components/service-steps';
 import { NavBar } from '@/components/navbar';
 import heroImage from '@/../public/img/social-large.jpg';
+import { Logo } from '@/components/logo';
+import { useTheme } from '@/context/theme';
 
 const isExport = process.env.NEXT_PUBLIC_EXPORT_MODE === 'true';
+
+import defaultThemes from "../../../themes.json"
 
 const customLoader = ({ src, width, quality }) => {
   return `${src}?w=${width}&q=${quality || 75}`;
@@ -17,6 +21,7 @@ const imageSrc = heroImage?.src || '/img/social-large.jpg';
 
 export default function HomePage() {
   const { bookingTypes, loading, error } = useBookingTypes();
+  const { theme } = useTheme();
 
   // Map `bookingTypes` to `serviceData`
   const serviceData = [
@@ -62,7 +67,7 @@ export default function HomePage() {
       {/* Centered Content */}
       <div className="text-center">
         {/* Avatar Image */}
-        <div className="relative mx-auto mb-6 h-32 w-32 overflow-hidden rounded-full border-4 border-gray-800 shadow-md">
+        <div className="relative mx-auto mb-6 h-32 w-32 overflow-hidden rounded-full border-4 border-primary-900 shadow-md">
           <Image
             src={imageSrc}
             loader={isExport ? customLoader : undefined}
@@ -75,8 +80,8 @@ export default function HomePage() {
           />
         </div>
         {/* Title and Description */}
-        <h1 className="text-4xl font-bold text-primary-800">Lula Gym</h1>
-        <p className="mt-2 text-left text-lg text-primary-800 sm:text-center">
+        <h1 className="text-4xl font-bold text-primary-900">Lula Gym</h1>
+        <p className="mt-2 text-left text-lg text-primary-200 sm:text-center">
           Want to get fit and enjoy the journey? <br />
           Book a personal training session with one of our talented trainers.
         </p>
@@ -96,12 +101,18 @@ export default function HomePage() {
 
       {/* Logo Image at Bottom Center */}
       <div className="absolute left-1/2 -translate-x-1/2 transform pt-10">
-        <img
+      <Logo
+            primaryColor={defaultThemes[theme].primary[800]}  // Fetch primary color dynamically
+            dotColor={defaultThemes[theme].primary[200]} // Fetch secondary color dynamically
+            width="170px"
+            height="70px"
+          />
+        {/* <img
           src="/img/simply_studio_logo_b_w.png"
           alt="Simply Studio Logo"
-          width={150}
-          height={50}
-        />
+          width={160}
+          height={60}
+        /> */}
       </div>
     </div>
   );
