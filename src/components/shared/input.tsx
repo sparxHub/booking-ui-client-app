@@ -1,90 +1,91 @@
-import cx from "classnames"
-import type { HTMLInputTypeAttribute, InputHTMLAttributes } from "react"
+import { useState } from "react";
+import cx from "classnames";
+import type { HTMLInputTypeAttribute, InputHTMLAttributes } from "react";
 
-// ------------------------------
-// Input
-// ------------------------------
 type InputProps = {
-  name: string
-  id: string
-  label: string
-  type?: HTMLInputTypeAttribute
-  required?: boolean
-}
+  name: string;
+  id: string;
+  label: string;
+  type?: HTMLInputTypeAttribute;
+  required?: boolean;
+  placeholder?: string;
+  showForgotPassword?: boolean; // Toggle the "Forgot?" button
+  onForgotPassword?: () => void; // Callback for "Forgot?" button
+};
 
-// TODO: Work something out for validation/state of inputs
 export function Input({
   name,
   id,
   label,
   type = "text",
   required = false,
+  placeholder = "",
+  showForgotPassword = false,
+  onForgotPassword,
   ...props
 }: InputProps & InputHTMLAttributes<HTMLInputElement>) {
+  const [showPassword, setShowPassword] = useState(false);
+
   return (
-    <div>
+    <div className="relative">
+      {/* Label */}
       <label
         htmlFor={id}
         className={cx(
-          "relative",
+          "block text-sm font-medium text-gray-700",
           required &&
-            'after:-right- after:absolute after:-top-1 after:h-2 after:w-2 after:content-["*"]',
+            'after:content-["*"] after:ml-0.5 after:text-red-500'
         )}
       >
         {label}
       </label>
+
+      {/* Input */}
       <input
-        className={cx(
-          "mt-1 block w-full rounded-lg px-4 py-2 text-slate-800 shadow-sm ring-1 ring-inset ring-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500",
-        )}
-        type={type}
-        name={name}
         id={id}
-        required
+        name={name}
+        type={type === "password" && showPassword ? "text" : type}
+        placeholder={placeholder}
+        required={required}
+        className={cx(
+          "mt-1 block w-full rounded-md border border-primary-700  focus:border-primary-300 focus:ring-primary-300 sm:text-sm"
+        )}
+        style={{
+          height: "2.2rem", // Explicit height for the input field
+          padding: "0.375rem 0.75rem", // Ensuring padding looks balanced
+        }}
         {...props}
       />
-    </div>
-  )
-}
 
-// ------------------------------
-// Textarea
-// ------------------------------
-type TextareaProps = {
-  name: string
-  id: string
-  label: string
-  required?: boolean
-  rows?: number
-}
-
-export function Textarea({
-  name,
-  id,
-  label,
-  rows = 6,
-  required = false,
-  ...props
-}: TextareaProps & InputHTMLAttributes<HTMLTextAreaElement>) {
-  return (
-    <div>
-      <label
-        htmlFor={id}
-        className={cx(
-          "relative",
-          required &&
-            'after:-right- after:absolute after:-top-1 after:h-2 after:w-2 after:content-["*"]',
-        )}
-      >
-        {label}
-      </label>
-      <textarea
-        rows={rows}
-        className="mt-1 block w-full rounded-lg px-4 py-2 text-slate-800 shadow-sm ring-1 ring-inset ring-slate-300 invalid:ring-red-600 placeholder-shown:invalid:ring-slate-300 focus:outline-none focus:ring-2 focus:ring-primary-500"
-        name={name}
-        id={id}
-        {...props}
-      />
+      {/* Additional Features for Password Inputs */}
+      {type === "password" && (
+        <>
+          {/* Forgot Password Button */}
+          {showForgotPassword && (
+            <button
+              type="button"
+              onClick={onForgotPassword}
+              className="absolute inset-y-0 right-20 flex items-center text-sm text-primary-600 hover:underline"
+              style={{
+                top: "1rem", // Vertically center the button
+              }}
+            >
+              Forgot?
+            </button>
+          )}
+          {/* Toggle Password Visibility */}
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute inset-y-0 right-4 flex items-center text-gray-500 hover:text-gray-700"
+            style={{
+              top: "1rem", // Vertically center the button
+            }}
+          >
+            {showPassword ? "🙈" : "👁️"}
+          </button>
+        </>
+      )}
     </div>
-  )
+  );
 }
