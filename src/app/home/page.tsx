@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useBookingTypes } from '@/context/booking-types';
+import { useAuth } from '@/context/auth-context';
 import { ServiceSteps } from '@/components/service-steps';
 import { NavBar } from '@/components/navbar';
 import heroImage from '@/../public/img/social-large.jpg';
@@ -20,6 +21,7 @@ const customLoader = ({ src, width, quality }) => {
 const imageSrc = heroImage?.src || '/img/social-large.jpg';
 
 export default function HomePage() {
+  const { user, logout, loginWithGoogle } = useAuth();
   const { bookingTypes, loading, error } = useBookingTypes();
   const { theme } = useTheme();
 

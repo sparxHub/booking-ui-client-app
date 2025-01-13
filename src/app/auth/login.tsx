@@ -9,7 +9,7 @@ export function LoginDialog({
   onClose,
 }: {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
 }) {
   if (!isOpen) return null;
 

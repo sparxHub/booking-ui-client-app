@@ -100,7 +100,7 @@ export function NavBar() {
       {/* Login Dialog */}
       <LoginDialog
         isOpen={isLoginDialogOpen}
-        onClose={() => setIsLoginDialogOpen(false)}
+        // onClose={() => setIsLoginDialogOpen(false)}
       />
     </>
   );
