@@ -1,4 +1,4 @@
-import { serverRequest } from "@/api/serverAdapter";
+import { serverRequest } from "@/api/server_adapter";
 import { Manager } from "@/domain/managers";
 
 /**
