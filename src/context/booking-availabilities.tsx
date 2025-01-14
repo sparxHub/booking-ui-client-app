@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { getBookings } from "@/services/bookingService";
+import { getBookings } from "@/services/booking-service";
 import { Booking } from "@/domain/bookings";
 import { BookingType } from "@/domain/bookingTypes";
 

@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { Dialog } from "@/components/dialog";
 import { Input } from "@/components/shared/input";
 import { Button } from "@/components/shared/button";
+import { useAuth } from "@/context/auth-context";
 
 export function LoginDialog({
   isOpen,
@@ -11,6 +13,29 @@ export function LoginDialog({
   isOpen: boolean;
   onClose?: () => void;
 }) {
+  const { loginWithEmailPassword, loginWithGoogle } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleEmailLogin = async () => {
+    try {
+      await loginWithEmailPassword(email, password);
+      if (onClose) onClose();
+    } catch (err) {
+      setError("Invalid email or password. Please try again.");
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await loginWithGoogle();
+      if (onClose) onClose();
+    } catch (err) {
+      setError("Google login failed. Please try again.");
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -30,6 +55,7 @@ export function LoginDialog({
               size="medium"
               impact="bold"
               className="w-full flex items-center justify-center gap-2 bg-black text-white hover:bg-gray-800"
+              onClick={handleGoogleLogin}
             >
               <img
                 src="https://www.google.com/favicon.ico"
@@ -46,6 +72,13 @@ export function LoginDialog({
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="text-sm text-red-500">
+                {error}
+              </div>
+            )}
+
             {/* Email Input */}
             <Input
               id="email"
@@ -53,6 +86,8 @@ export function LoginDialog({
               label="Email address"
               type="email"
               placeholder="john.doe@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
 
@@ -63,6 +98,8 @@ export function LoginDialog({
               label="Password"
               type="password"
               placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               showForgotPassword
               onForgotPassword={() => alert("Forgot Password Clicked")}
@@ -73,6 +110,7 @@ export function LoginDialog({
               size="medium"
               impact="outline"
               className="w-full border border-primary-900 text-primary-900 hover:bg-primary-100"
+              onClick={handleEmailLogin}
             >
               Sign In
             </Button>

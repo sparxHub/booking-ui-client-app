@@ -1,3 +1,5 @@
+//app/home/page.tsx
+
 'use client';
 
 import { useState } from 'react';
@@ -9,10 +11,11 @@ import { NavBar } from '@/components/navbar';
 import heroImage from '@/../public/img/social-large.jpg';
 import { Logo } from '@/components/logo';
 import { useTheme } from '@/context/theme';
+import { LoginDialog } from '@/app/auth/login';
 
 const isExport = process.env.NEXT_PUBLIC_EXPORT_MODE === 'true';
 
-import defaultThemes from "../../../themes.json"
+import defaultThemes from '../../../themes.json';
 
 const customLoader = ({ src, width, quality }) => {
   return `${src}?w=${width}&q=${quality || 75}`;
@@ -24,6 +27,20 @@ export default function HomePage() {
   const { user, logout, loginWithGoogle } = useAuth();
   const { bookingTypes, loading, error } = useBookingTypes();
   const { theme } = useTheme();
+
+  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
+
+  const handleLoginClick = () => {
+    setIsLoginDialogOpen(true);
+  };
+
+  const handleJoinClick = () => {
+    console.log('Redirect to sign-up page or open sign-up dialog.');
+  };
+
+  const handleLogoutClick = async () => {
+    await logout();
+  };
 
   // Map `bookingTypes` to `serviceData`
   const serviceData = [
@@ -65,7 +82,7 @@ export default function HomePage() {
   });
 
   return (
-    <div className="relative mx-auto max-w-3xl pt-8 p-0 sm:p-4 xl:p-10">
+    <div className="relative mx-auto max-w-3xl p-0 pt-8 sm:p-4 xl:p-10">
       {/* Centered Content */}
       <div className="text-center">
         {/* Avatar Image */}
@@ -90,7 +107,14 @@ export default function HomePage() {
       </div>
 
       {/* NavBar */}
-      <NavBar />
+      <NavBar
+        isLoggedIn={!!user}
+        userName={user?.displayName || 'User'}
+        // userAvatar={user?.photoURL}
+        onLoginClick={handleLoginClick}
+        onJoinClick={handleJoinClick}
+        onLogoutClick={handleLogoutClick}
+      />
 
       {/* Service Steps */}
       {loading ? (
@@ -103,19 +127,19 @@ export default function HomePage() {
 
       {/* Logo Image at Bottom Center */}
       <div className="absolute left-1/2 -translate-x-1/2 transform pt-10">
-      <Logo
-            primaryColor={defaultThemes[theme].primary[800]}  // Fetch primary color dynamically
-            dotColor={defaultThemes[theme].primary[200]} // Fetch secondary color dynamically
-            width="170px"
-            height="70px"
-          />
-        {/* <img
-          src="/img/simply_studio_logo_b_w.png"
-          alt="Simply Studio Logo"
-          width={160}
-          height={60}
-        /> */}
+        <Logo
+          primaryColor={defaultThemes[theme].primary[800]} // Fetch primary color dynamically
+          dotColor={defaultThemes[theme].primary[200]} // Fetch secondary color dynamically
+          width="170px"
+          height="70px"
+        />
       </div>
+
+      {/* Login Dialog */}
+      <LoginDialog
+        isOpen={isLoginDialogOpen}
+        onClose={() => setIsLoginDialogOpen(false)}
+      />
     </div>
   );
 }

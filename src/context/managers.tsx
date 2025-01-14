@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { getManagers } from "@/services/managerService";
+import { getManagers } from "@/services/manager-service";
 import { Manager } from "@/domain/managers";
 
 const ManagersContext = createContext<{

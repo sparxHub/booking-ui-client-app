@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation"; // For extracting query params
-import { getBookingTypes } from "@/services/bookingService";
+import { getBookingTypes } from "@/services/booking-service";
 import { BookingType } from "@/domain/bookingTypes";
 
 const BookingTypesContext = createContext<{
