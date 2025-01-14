@@ -1,4 +1,7 @@
+//api/server-adapter.ts
+
 import axios, { AxiosRequestConfig } from "axios";
+import { SettingsService } from "@/services/settings-service";
 
 // Define a custom API exception
 export class ApiException extends Error {
@@ -36,12 +39,19 @@ export async function serverRequest<T>(
 ): Promise<ServerResponse<T>> {
   const url = `${BASE_URL}${route}`;
 
+  // Fetch the businessId dynamically from SettingsService
+  const businessId = await SettingsService.get("businessId", null);
+  if (businessId) {
+    queryParams.businessId = businessId;
+  } else {
+    console.warn("businessId is not available in settings.");
+  }
+
   const config: AxiosRequestConfig = {
     method,
     url,
     headers: {
       "Content-Type": "application/json",
-      // Authorization: `Bearer ${process.env.JWT || ""}`,
       ...customHeaders,
     },
     params: queryParams,

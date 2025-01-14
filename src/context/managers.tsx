@@ -23,8 +23,8 @@ export function ManagersProvider({ children }: { children: React.ReactNode }) {
     const fetchManagers = async () => {
       try {
         setLoading(true);
-        const businessId = "7dde79e9-cbe8-4a48-ae71-35a111937af1"; // Replace with dynamic businessId if needed
-        const fetchedManagers = await getManagers(businessId);
+
+        const fetchedManagers = await getManagers(); // businessId is fetched internally
         setManagers(fetchedManagers);
       } catch (err) {
         console.error("Error fetching managers:", err);

@@ -2,10 +2,9 @@ import { serverRequest } from "@/api/server-adapter";
 import { Manager } from "@/domain/managers";
 
 /**
- * Fetch managers for a given business ID and optional filters.
+ * Fetch managers with optional filters.
  */
 export const getManagers = async (
-  businessId: string,
   params?: {
     page?: number;
     pageSize?: number;
@@ -18,7 +17,7 @@ export const getManagers = async (
   const response = await serverRequest<{ managers: Manager[] }>(
     "GET",
     "/memberapp/managers",
-    { businessId, ...params }
+    params // Only pass optional filters; businessId is handled in serverRequest
   );
 
   if (response.status === 0) {

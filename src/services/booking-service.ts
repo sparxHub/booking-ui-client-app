@@ -3,11 +3,9 @@ import { Booking } from "@/domain/bookings";
 import { BookingType } from "@/domain/bookingTypes";
 
 /**
- * Fetch booking types for a given business ID.
- * Supports optional filters like managerId, sessionType, bookingTypeState, pagination, and sorting.
+ * Fetch booking types with optional filters.
  */
 export const getBookingTypes = async (
-  businessId: string,
   options?: {
     managerId?: string;
     page?: number;
@@ -20,8 +18,7 @@ export const getBookingTypes = async (
     typeIds?: string[];
   }
 ): Promise<BookingType[]> => {
-  // Construct query parameters dynamically
-  const queryParams: Record<string, any> = { businessId };
+  const queryParams: Record<string, any> = {};
 
   if (options?.managerId) queryParams.managerId = options.managerId;
   if (options?.page) queryParams.page = options.page;
@@ -50,18 +47,14 @@ export const getBookingTypes = async (
 };
 
 /**
- * Fetch bookings for a given business ID within a date range.
- * Supports optional bookingTypeId.
+ * Fetch bookings within a date range.
  */
 export const getBookings = async (
-  businessId: string,
   from: string,
   to: string,
   bookingTypeId?: string // Optional bookingTypeId
 ): Promise<Booking[]> => {
-  // Construct query parameters dynamically
   const queryParams: Record<string, string> = {
-    businessId,
     from,
     to,
   };
@@ -77,23 +70,24 @@ export const getBookings = async (
   );
 
   if (response.status === 0) {
-    // Transform API response into Booking[]
-    return response.params?.bookings.map((booking) => ({
-      _id: booking._id,
-      bookingId: booking.bookingId,
-      businessId: booking.businessId,
-      typeId: booking.typeId,
-      managerId: booking.managerId,
-      sessionType: booking.sessionType,
-      startTime: booking.startTime,
-      duration: booking.duration,
-      maxBookings: booking.maxBookings ?? null,
-      bookedMemberIds: booking.bookedMemberIds,
-      waitingMemberIds: booking.waitingMemberIds,
-      createdAt: booking.createdAt,
-      updatedAt: booking.updatedAt,
-      remoteSession: booking.remoteSession,
-    })) || [];
+    return (
+      response.params?.bookings.map((booking) => ({
+        _id: booking._id,
+        bookingId: booking.bookingId,
+        businessId: booking.businessId,
+        typeId: booking.typeId,
+        managerId: booking.managerId,
+        sessionType: booking.sessionType,
+        startTime: booking.startTime,
+        duration: booking.duration,
+        maxBookings: booking.maxBookings ?? null,
+        bookedMemberIds: booking.bookedMemberIds,
+        waitingMemberIds: booking.waitingMemberIds,
+        createdAt: booking.createdAt,
+        updatedAt: booking.updatedAt,
+        remoteSession: booking.remoteSession,
+      })) || []
+    );
   } else {
     throw new Error(response.message || "Failed to fetch bookings");
   }

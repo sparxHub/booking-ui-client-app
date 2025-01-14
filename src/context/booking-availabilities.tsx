@@ -1,4 +1,4 @@
-"use client";
+// context/booking-availabilities.tsx
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { getBookings } from "@/services/booking-service";
@@ -27,32 +27,27 @@ export function BookingAvailabilitiesProvider({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Only fetch bookings when `selectedBookingType` is defined
     if (selectedBookingType) {
       const fetchBookings = async () => {
         try {
           setLoading(true);
-          const businessId = "7dde79e9-cbe8-4a48-ae71-35a111937af1";
 
-          // Determine whether to filter by typeId (only for personal sessions)
           const typeId =
             selectedBookingType.sessionType === "personalSession"
               ? selectedBookingType.typeId
               : undefined;
 
-          // Fetch bookings
           const bookings = await getBookings(
-            businessId,
             new Date().toISOString(),
-            new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Next 30 days
-            typeId // Pass typeId only for personal sessions
+            new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+            typeId
           );
 
           setBookings(bookings);
         } catch (err) {
           console.error("Error fetching bookings:", err);
           setError("Failed to fetch bookings. Using fallback data.");
-          setBookings([]); // Fallback empty bookings
+          setBookings([]);
         } finally {
           setLoading(false);
         }
@@ -60,7 +55,6 @@ export function BookingAvailabilitiesProvider({
 
       fetchBookings();
     } else {
-      // Reset state when there is no `selectedBookingType`
       setBookings([]);
       setError(null);
       setLoading(false);

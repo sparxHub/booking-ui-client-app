@@ -31,10 +31,9 @@ export function BookingTypesProvider({ children }) {
     const fetchBookingTypes = async () => {
       try {
         setLoading(true);
-        const businessId = "7dde79e9-cbe8-4a48-ae71-35a111937af1";
 
         // Fetch booking types via bookingService
-        const bookingTypes = await getBookingTypes(businessId);
+        const bookingTypes = await getBookingTypes();
         setBookingTypes(bookingTypes);
 
         // Determine selected booking type and mode
