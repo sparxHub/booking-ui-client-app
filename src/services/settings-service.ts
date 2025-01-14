@@ -1,4 +1,4 @@
-import { serverRequest } from "@/api/server_adapter";
+import { serverRequest } from "@/api/server-adapter";
 
 export type Settings = Record<string, any>;
 

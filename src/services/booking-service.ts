@@ -1,4 +1,4 @@
-import { serverRequest } from "@/api/server_adapter";
+import { serverRequest } from "@/api/server-adapter";
 import { Booking } from "@/domain/bookings";
 import { BookingType } from "@/domain/bookingTypes";
 
