@@ -1,108 +1,113 @@
+"use client";
+
 import { serverRequest } from "@/api/server-adapter";
 
 export type Settings = Record<string, any>;
 
 export class SettingsService {
-  private static settings: Settings = {};
+  private static settings: Record<string, any> = {};
   private static initialized = false;
+  private static initPromise: Promise<void> | null = null;
 
   /**
-   * Initialize the settings service by loading defaults and applying overrides.
-   * @param overrides Optional overrides for default settings.
+   * Initialize the settings service.
    */
-  static async init(overrides: Settings = {}): Promise<void> {
+  private static async init(): Promise<void> {
     if (this.initialized) return;
 
-    // Load default settings from JSON file
-    const defaults = await this.loadDefaults();
+    // Avoid initializing multiple times
+    if (!this.initPromise) {
+      this.initPromise = (async () => {
+        try {
+          // Load default and persisted settings
+          const defaults = await this.loadDefaults();
+          const persistedSettings = this.loadPersistedSettings();
+          this.settings = { ...defaults, ...persistedSettings };
 
-    // Merge defaults with overrides
-    this.settings = { ...defaults, ...overrides };
+          // Mark as initialized
+          this.initialized = true;
 
-    // Load persisted settings
-    const persistedSettings = this.loadPersistedSettings();
-    this.settings = { ...this.settings, ...persistedSettings };
+          // Schedule fetching server settings
+          this.scheduleFetchServerSettings();
+        } catch (error) {
+          console.error("Settings initialization failed:", error);
+        }
+      })();
+    }
 
-    // Fetch server settings and apply
-    await this.fetchServerSettings();
-
-    this.initialized = true;
+    return this.initPromise;
   }
 
   /**
-   * Load default settings from a JSON file.
+   * Schedule fetching server-side settings after initialization.
    */
-  private static async loadDefaults(): Promise<Settings> {
-    const response = await fetch("/assets/app_settings.json");
-    if (!response.ok) {
-      throw new Error("Failed to load default settings");
+  private static scheduleFetchServerSettings(): void {
+    // Use setTimeout to defer the execution without blocking init
+    setTimeout(async () => {
+      try {
+        await this.fetchServerSettings();
+      } catch (error) {
+        console.error("Failed to fetch server settings:", error);
+      }
+    }, 0);
+  }
+
+  /**
+   * Load default settings from a JSON file using fetch.
+   */
+  private static async loadDefaults(): Promise<Record<string, any>> {
+    try {
+      // Use fetch to load the JSON file from the public directory
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/assets/app_settings.json`);
+      if (!response.ok) {
+        throw new Error("Failed to load default settings");
+      }
+      return response.json();
+    } catch (error) {
+      throw new Error(`Failed to load default settings: ${error.message}`);
     }
-    return response.json();
   }
 
   /**
    * Load persisted settings from local storage.
    */
-  private static loadPersistedSettings(): Settings {
+  private static loadPersistedSettings(): Record<string, any> {
+    if (typeof window === "undefined") return {}; // No local storage on the server
     const persisted = localStorage.getItem("appSettings");
     return persisted ? JSON.parse(persisted) : {};
   }
 
   /**
-   * Fetch settings from the server and merge with current settings.
+   * Fetch server-side settings.
    */
   private static async fetchServerSettings(): Promise<void> {
     try {
-      const response = await serverRequest<{ settings: Settings }>(
+      const response = await serverRequest<{ settings: Record<string, any> }>(
         "GET",
         "/settings/getSettings"
       );
       if (response.status === 0 && response.params?.settings) {
-        const serverSettings = response.params.settings;
-        this.settings = { ...this.settings, ...serverSettings };
-        this.persistSettings();
+        // Merge fetched settings into the existing settings
+        this.settings = { ...this.settings, ...response.params.settings };
       } else {
-        console.error("Error fetching server settings:", response.message);
+        console.warn("Failed to fetch server settings");
       }
     } catch (error) {
-      console.error("Failed to fetch server settings:", error);
+      console.error("Error fetching server settings:", error);
     }
   }
 
   /**
-   * Persist current settings to local storage.
+   * Get a setting by key with a default value.
+   * If the settings are not initialized, wait for initialization.
    */
-  private static persistSettings(): void {
-    localStorage.setItem("appSettings", JSON.stringify(this.settings));
-  }
+  static async get<T = any>(key: string, defaultValue: T): Promise<T> {
+    // Wait for initialization if not yet initialized
+    if (!this.initialized) {
+      await this.init();
+    }
 
-  /**
-   * Get a setting by key with an optional default value.
-   */
-  static get<T = any>(key: string, defaultValue: T): T {
+    // Return the requested setting or the default value
     return this.settings[key] !== undefined ? this.settings[key] : defaultValue;
-  }
-
-  /**
-   * Set or update a setting and persist it.
-   */
-  static set(key: string, value: any): void {
-    this.settings[key] = value;
-    this.persistSettings();
-  }
-
-  /**
-   * Reset a setting to its default value.
-   */
-  static reset(key: string): void {
-    delete this.settings[key];
-    this.persistSettings();
-  }
-
-  /**
-   * Get all current settings.
-   */
-  static getAll(): Settings {
-    return { ...this.settings };
   }
 }

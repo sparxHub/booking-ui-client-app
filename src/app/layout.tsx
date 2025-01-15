@@ -1,16 +1,17 @@
-import { Metadata } from "next"
-
-import AppLayout from "@/components/layout/app-layout"
-import "@/styles/tailwind.css"
+import { Metadata } from "next";
+import AppLayout from "@/components/layout/app-layout";
+import "@/styles/tailwind.css";
 
 import {
   sharedOgMetadata,
   sharedTwitterMetadata,
-} from "@/utils/shared-metadata"
+} from "@/utils/shared-metadata";
 
-const title = "Pro Tailwind Coaching"
+import { SettingsService } from "@/services/settings-service";
+
+const title = "Pro Tailwind Coaching";
 const description =
-  "A fictive booking application to support the Pro Tailwind workshops"
+  "A fictive booking application to support the Pro Tailwind workshops";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://calendar-app.protailwind.com/"),
@@ -35,12 +36,12 @@ export const metadata: Metadata = {
     },
     description,
   },
-}
+};
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  return <AppLayout>{children}</AppLayout>
+  return <AppLayout>{children}</AppLayout>;
 }
