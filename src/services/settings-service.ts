@@ -58,7 +58,11 @@ export class SettingsService {
   private static async loadDefaults(): Promise<Record<string, any>> {
     try {
       // Use fetch to load the JSON file from the public directory
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || ""}/assets/app_settings.json`);
+      const url =
+        process.env.NEXT_PUBLIC_EXPORT_MODE === "true"
+          ? "/assets/app_settings.json"
+          : `${process.env.NEXT_PUBLIC_BASE_URL || ""}/assets/app_settings.json`;
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Failed to load default settings");
       }
@@ -110,4 +114,19 @@ export class SettingsService {
     // Return the requested setting or the default value
     return this.settings[key] !== undefined ? this.settings[key] : defaultValue;
   }
+
+  /**
+   * Get a text string by key with a default fallback.
+   */
+  static async getText(key: string, defaultText: string): Promise<string> {
+    // Wait for initialization if not yet initialized
+    if (!this.initialized) {
+      await this.init();
+    }
+
+    // Return the text from settings or the default
+    const texts = this.settings["texts"] || {};
+    return texts[key] !== undefined ? texts[key] : defaultText;
+  }
+
 }

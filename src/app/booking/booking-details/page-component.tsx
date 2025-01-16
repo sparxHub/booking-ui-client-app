@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useDateFormatter } from "react-aria"
 
 import { Button, ButtonProps } from "@/components/shared/button"
-import { Input, Textarea } from "@/components/shared/input"
+import { Input} from "@/components/shared/input"
 
 export default function PageComponent() {
   const router = useRouter()
@@ -62,7 +62,7 @@ export default function PageComponent() {
             />
           </div>
           <div className="mt-8">
-            <Textarea name="notes" label="Notes & Questions" id="notes" />
+            {/* <Textarea name="notes" label="Notes & Questions" id="notes" /> */}
           </div>
           <div className="mt-8">
             <Button type="submit" status={status} disabled={status !== "idle"}>

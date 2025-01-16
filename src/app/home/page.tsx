@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useBookingTypes } from '@/context/booking-types';
 import { useAuth } from '@/context/auth-context';
@@ -16,6 +16,7 @@ import { LoginDialog } from '@/app/auth/login';
 const isExport = process.env.NEXT_PUBLIC_EXPORT_MODE === 'true';
 
 import defaultThemes from '../../../themes.json';
+import { SettingsService } from '@/services/settings-service';
 
 const customLoader = ({ src, width, quality }) => {
   return `${src}?w=${width}&q=${quality || 75}`;
@@ -27,6 +28,24 @@ export default function HomePage() {
   const { user, logout, loginWithGoogle } = useAuth();
   const { bookingTypes, loading, error } = useBookingTypes();
   const { theme } = useTheme();
+
+  const [title, setTitle] = useState("Loading...");
+  const [description, setDescription] = useState("Loading...");
+
+  useEffect(() => {
+    const loadTexts = async () => {
+      const fetchedTitle = await SettingsService.getText("title", "Default Title");
+      const fetchedDescription = await SettingsService.getText(
+        "description",
+        "Default Description"
+      );
+      setTitle(fetchedTitle);
+      setDescription(fetchedDescription);
+    };
+
+    loadTexts();
+  }, []);
+
 
   const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
 
@@ -99,10 +118,9 @@ export default function HomePage() {
           />
         </div>
         {/* Title and Description */}
-        <h1 className="text-4xl font-bold text-primary-900">Lula Gym</h1>
+        <h1 className="text-4xl font-bold text-primary-900">{title}</h1>
         <p className="mt-2 text-left text-lg text-primary-200 sm:text-center">
-          Want to get fit and enjoy the journey? <br />
-          Book a personal training session with one of our talented trainers.
+        {description}
         </p>
       </div>
 
