@@ -1,5 +1,4 @@
-"use client";
-
+// services/settings-service.ts
 import { serverRequest } from "@/api/server-adapter";
 
 export type Settings = Record<string, any>;
@@ -42,7 +41,6 @@ export class SettingsService {
    * Schedule fetching server-side settings after initialization.
    */
   private static scheduleFetchServerSettings(): void {
-    // Use setTimeout to defer the execution without blocking init
     setTimeout(async () => {
       try {
         await this.fetchServerSettings();
@@ -53,11 +51,10 @@ export class SettingsService {
   }
 
   /**
-   * Load default settings from a JSON file using fetch.
+   * Load settings from `app_settings.json`.
    */
   private static async loadDefaults(): Promise<Record<string, any>> {
     try {
-      // Use fetch to load the JSON file from the public directory
       const url =
         process.env.NEXT_PUBLIC_EXPORT_MODE === "true"
           ? "/assets/app_settings.json"
@@ -76,7 +73,7 @@ export class SettingsService {
    * Load persisted settings from local storage.
    */
   private static loadPersistedSettings(): Record<string, any> {
-    if (typeof window === "undefined") return {}; // No local storage on the server
+    if (typeof window === "undefined") return {};
     const persisted = localStorage.getItem("appSettings");
     return persisted ? JSON.parse(persisted) : {};
   }
@@ -91,7 +88,6 @@ export class SettingsService {
         "/settings/getSettings"
       );
       if (response.status === 0 && response.params?.settings) {
-        // Merge fetched settings into the existing settings
         this.settings = { ...this.settings, ...response.params.settings };
       } else {
         console.warn("Failed to fetch server settings");
@@ -103,15 +99,11 @@ export class SettingsService {
 
   /**
    * Get a setting by key with a default value.
-   * If the settings are not initialized, wait for initialization.
    */
   static async get<T = any>(key: string, defaultValue: T): Promise<T> {
-    // Wait for initialization if not yet initialized
     if (!this.initialized) {
       await this.init();
     }
-
-    // Return the requested setting or the default value
     return this.settings[key] !== undefined ? this.settings[key] : defaultValue;
   }
 
@@ -119,14 +111,20 @@ export class SettingsService {
    * Get a text string by key with a default fallback.
    */
   static async getText(key: string, defaultText: string): Promise<string> {
-    // Wait for initialization if not yet initialized
     if (!this.initialized) {
       await this.init();
     }
-
-    // Return the text from settings or the default
     const texts = this.settings["texts"] || {};
     return texts[key] !== undefined ? texts[key] : defaultText;
   }
 
+  /**
+   * Load settings directly for server-side usage.
+   */
+  static async loadSettings(): Promise<Record<string, any>> {
+    if (!this.initialized) {
+      await this.init();
+    }
+    return this.settings;
+  }
 }

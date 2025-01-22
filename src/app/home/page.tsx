@@ -1,163 +1,21 @@
 //app/home/page.tsx
 
-'use client';
+import { SettingsService } from "@/services/settings-service";
+import HomePageClient from "./home-client";
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { useBookingTypes } from '@/context/booking-types';
-import { useAuth } from '@/context/auth-context';
-import { ServiceSteps } from '@/components/service-steps';
-import { NavBar } from '@/components/navbar';
-import heroImage from '@/../public/img/social-large.jpg';
-import { Logo } from '@/components/logo';
-import { useTheme } from '@/context/theme';
-import { LoginDialog } from '@/app/auth/login';
+/**
+ * Dynamically generate metadata based on settings.
+ */
+export async function generateMetadata() {
+  const settings = await SettingsService.loadSettings();
+  const texts = settings.texts || {};
 
-const isExport = process.env.NEXT_PUBLIC_EXPORT_MODE === 'true';
-
-import defaultThemes from '../../../themes.json';
-import { SettingsService } from '@/services/settings-service';
-
-const customLoader = ({ src, width, quality }) => {
-  return `${src}?w=${width}&q=${quality || 75}`;
-};
-
-const imageSrc = heroImage?.src || '/img/social-large.jpg';
-
-export default function HomePage() {
-  const { user, logout, loginWithGoogle } = useAuth();
-  const { bookingTypes, loading, error } = useBookingTypes();
-  const { theme } = useTheme();
-
-  const [title, setTitle] = useState("Loading...");
-  const [description, setDescription] = useState("Loading...");
-
-  useEffect(() => {
-    const loadTexts = async () => {
-      const fetchedTitle = await SettingsService.getText("title", "Default Title");
-      const fetchedDescription = await SettingsService.getText(
-        "description",
-        "Default Description"
-      );
-      setTitle(fetchedTitle);
-      setDescription(fetchedDescription);
-    };
-
-    loadTexts();
-  }, []);
-
-
-  const [isLoginDialogOpen, setIsLoginDialogOpen] = useState(false);
-
-  const handleLoginClick = () => {
-    setIsLoginDialogOpen(true);
+  return {
+    title: texts.title || "Default Title",
+    description: texts.description || "Default Description",
   };
+}
 
-  const handleJoinClick = () => {
-    console.log('Redirect to sign-up page or open sign-up dialog.');
-  };
-
-  const handleLogoutClick = async () => {
-    await logout();
-  };
-
-  // Map `bookingTypes` to `serviceData`
-  const serviceData = [
-    {
-      title: 'Classes',
-      items: bookingTypes
-        .filter((type) => type.sessionType === 'classSession')
-        .map((type) => ({
-          title: type.title,
-          description: type.details || 'Detailed description not available.',
-          duration: `${type.duration || 45}m`,
-          type: 'Group', // Stubbed value
-          action: `/booking?type=${type.typeId}`, // Dynamic action based on booking type ID
-        })),
-    },
-    {
-      title: 'Personal Classes',
-      items: bookingTypes
-        .filter((type) => type.sessionType === 'personalSession')
-        .map((type) => ({
-          title: type.title,
-          description:
-            type.details || 'Personalized session details not available.',
-          duration: `${type.duration || 30}m`,
-          type: 'Private', // Stubbed value
-          action: `/booking?type=${type.typeId}`, // Dynamic action based on booking type ID
-        })),
-    },
-    {
-      title: 'External Link',
-      url: 'https://example.com',
-    },
-  ].filter((section) => {
-    // Remove sections where `items` is an empty array (for `Classes` and `Personal Classes` only)
-    if (section.items !== undefined) {
-      return section.items.length > 0;
-    }
-    return true; // Keep sections without `items` (e.g., 'External Link')
-  });
-
-  return (
-    <div className="relative mx-auto max-w-3xl p-0 pt-8 sm:p-4 xl:p-10">
-      {/* Centered Content */}
-      <div className="text-center">
-        {/* Avatar Image */}
-        <div className="relative mx-auto mb-6 h-32 w-32 overflow-hidden rounded-full border-4 border-primary-800 shadow-md">
-          <Image
-            src={imageSrc}
-            loader={isExport ? customLoader : undefined}
-            priority
-            sizes="(min-width: 640px) 400px, 200px"
-            width={128}
-            height={128}
-            alt="Avatar"
-            className="h-full w-full object-cover"
-          />
-        </div>
-        {/* Title and Description */}
-        <h1 className="text-4xl font-bold text-primary-900">{title}</h1>
-        <p className="mt-2 text-left text-lg text-primary-200 sm:text-center">
-        {description}
-        </p>
-      </div>
-
-      {/* NavBar */}
-      <NavBar
-        isLoggedIn={!!user}
-        userName={user?.displayName || 'User'}
-        // userAvatar={user?.photoURL}
-        onLoginClick={handleLoginClick}
-        onJoinClick={handleJoinClick}
-        onLogoutClick={handleLogoutClick}
-      />
-
-      {/* Service Steps */}
-      {loading ? (
-        <p>Loading services...</p>
-      ) : error ? (
-        <p>Error loading services: {error}</p>
-      ) : (
-        <ServiceSteps steps={serviceData} />
-      )}
-
-      {/* Logo Image at Bottom Center */}
-      <div className="absolute left-1/2 -translate-x-1/2 transform pt-10">
-        <Logo
-          primaryColor={defaultThemes[theme].primary[800]} // Fetch primary color dynamically
-          dotColor={defaultThemes[theme].primary[200]} // Fetch secondary color dynamically
-          width="170px"
-          height="70px"
-        />
-      </div>
-
-      {/* Login Dialog */}
-      <LoginDialog
-        isOpen={isLoginDialogOpen}
-        onClose={() => setIsLoginDialogOpen(false)}
-      />
-    </div>
-  );
+export default function Page() {
+  return <HomePageClient />;
 }
